@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaTable, FaDownload, FaClock, FaSpinner } from 'react-icons/fa';
 import '../styles/ResultsViewer.css';
 
 const ResultsViewer = ({ 
@@ -11,10 +12,14 @@ const ResultsViewer = ({
   return (
     <div className={`results-viewer ${darkMode ? 'dark' : 'light'}`}>
       <div className="results-header">
-        <h2 className="section-title">Query Results</h2>
+        <div className="section-title">
+          <FaTable className="section-icon" />
+          <h2>Query Results</h2>
+        </div>
         <div className="results-controls">
           {executionTime && (
             <span className="execution-time">
+              <FaClock className="time-icon" />
               Execution time: {executionTime.toFixed(2)}s
             </span>
           )}
@@ -23,7 +28,7 @@ const ResultsViewer = ({
             className="export-btn"
             disabled={!queryResults}
           >
-            📥 Export CSV
+            <FaDownload /> Export CSV
           </button>
         </div>
       </div>

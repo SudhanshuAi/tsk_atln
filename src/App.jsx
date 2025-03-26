@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+// React Icons are imported in their respective components
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import QueryEditor from './components/QueryEditor';

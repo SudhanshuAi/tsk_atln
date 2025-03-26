@@ -22,8 +22,28 @@
   }
   
   .section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .section-title h2 {
     font-size: 1.1rem;
     font-weight: bold;
+  }
+  
+  .section-icon {
+    font-size: 1rem;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .spinner-icon {
+    animation: spin 1s linear infinite;
   }
   
   .editor-controls {

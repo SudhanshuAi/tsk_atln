@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaPlay, FaBookmark, FaSpinner, FaCode } from 'react-icons/fa';
 import '../styles/QueryEditor.css';
 
 const QueryEditor = ({ 
@@ -12,21 +13,32 @@ const QueryEditor = ({
   return (
     <div className={`query-editor ${darkMode ? 'dark' : 'light'}`}>
       <div className="editor-header">
-        <h2 className="section-title">SQL Query Editor</h2>
+        <div className="section-title">
+          <FaCode className="section-icon" />
+          <h2>SQL Query Editor</h2>
+        </div>
         <div className="editor-controls">
           <button 
             onClick={bookmarkQuery}
             className="bookmark-btn"
             title="Bookmark Query"
           >
-            📑
+            <FaBookmark />
           </button>
           <button 
             onClick={executeQuery}
             className={`run-btn ${isLoading ? 'loading' : ''}`}
             disabled={isLoading}
           >
-            {isLoading ? 'Running...' : '▶ Run Query'}
+            {isLoading ? (
+              <>
+                <FaSpinner className="spinner-icon" /> Running...
+              </>
+            ) : (
+              <>
+                <FaPlay /> Run Query
+              </>
+            )}
           </button>
         </div>
       </div>

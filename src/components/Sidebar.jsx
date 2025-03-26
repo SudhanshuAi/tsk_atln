@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaListAlt, FaHistory } from 'react-icons/fa';
 import PredefinedQueries from './Sidebar/PredefinedQueries';
 import RecentQueries from './Sidebar/RecentQueries';
 import '../styles/Sidebar.css';

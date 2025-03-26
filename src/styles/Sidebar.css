@@ -17,10 +17,20 @@
     border-right: 1px solid #1a202c;
   }
   
+  .sidebar-heading-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  
+  .sidebar-icon {
+    font-size: 0.9rem;
+  }
+  
   .sidebar-heading {
     font-size: 1rem;
     font-weight: bold;
-    margin-bottom: 12px;
   }
   
   /* Predefined Queries Section */

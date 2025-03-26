@@ -21,8 +21,15 @@
   }
   
   .app-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     font-size: 1.5rem;
     font-weight: bold;
+  }
+  
+  .header-icon {
+    font-size: 1.3rem;
   }
   
   .header-controls {
