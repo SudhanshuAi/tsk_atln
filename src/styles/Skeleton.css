@@ -1,0 +1,136 @@
+/* Skeleton.css - Styles for the skeleton loading state */
+
+.skeleton-container {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .skeleton-content {
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+  }
+  
+  .skeleton-icon-container {
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .skeleton-icon {
+    font-size: 2.5rem;
+    color: #e2e8f0;
+    background-color: #f1f5f9;
+    padding: 16px;
+    border-radius: 50%;
+  }
+  
+  .dark .skeleton-icon {
+    color: #334155;
+    background-color: #1e293b;
+  }
+  
+  .skeleton-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #64748b;
+  }
+  
+  .dark .skeleton-title {
+    color: #94a3b8;
+  }
+  
+  .skeleton-text {
+    color: #94a3b8;
+    margin-bottom: 32px;
+  }
+  
+  .dark .skeleton-text {
+    color: #64748b;
+  }
+  
+  /* Skeleton Table */
+  .skeleton-table {
+    width: 100%;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  
+  .dark .skeleton-table {
+    border-color: #1e293b;
+  }
+  
+  .skeleton-header {
+    display: flex;
+    background-color: #f8fafc;
+  }
+  
+  .dark .skeleton-header {
+    background-color: #0f172a;
+  }
+  
+  .skeleton-row {
+    display: flex;
+  }
+  
+  .skeleton-row:nth-child(odd) {
+    background-color: #ffffff;
+  }
+  
+  .skeleton-row:nth-child(even) {
+    background-color: #f8fafc;
+  }
+  
+  .dark .skeleton-row:nth-child(odd) {
+    background-color: #1e293b;
+  }
+  
+  .dark .skeleton-row:nth-child(even) {
+    background-color: #0f172a;
+  }
+  
+  .skeleton-cell {
+    flex: 1;
+    height: 40px;
+    padding: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .skeleton-cell::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: skeleton-loading 1.5s infinite;
+  }
+  
+  .dark .skeleton-cell::after {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  }
+  
+  .skeleton-cell.header {
+    height: 48px;
+    background-color: #f1f5f9;
+  }
+  
+  .dark .skeleton-cell.header {
+    background-color: #1e293b;
+  }
+  
+  @keyframes skeleton-loading {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }

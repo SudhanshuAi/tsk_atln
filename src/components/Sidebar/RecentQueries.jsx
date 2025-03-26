@@ -4,18 +4,18 @@ import { FaHistory, FaChevronUp, FaChevronDown } from 'react-icons/fa';
 const RecentQueries = ({ recentQueries, showHistory, setShowHistory, darkMode }) => {
   return (
     <div className="recent-queries">
-      <div className="recent-header">
+      <div 
+        className="recent-header"
+        onClick={() => setShowHistory(!showHistory)}
+        title={showHistory ? "Hide history" : "Show history"}
+      >
         <div className="sidebar-heading-container">
           <FaHistory className="sidebar-icon" />
           <h2 className="sidebar-heading">Recent Queries</h2>
         </div>
-        <button 
-          onClick={() => setShowHistory(!showHistory)}
-          className="history-toggle"
-          title={showHistory ? "Hide history" : "Show history"}
-        >
-          {showHistory ? <FaChevronUp /> : <FaChevronDown />}
-        </button>
+        <div className="sidebar-up">
+            {showHistory ? <FaChevronUp /> : <FaChevronDown />}
+        </div>
       </div>
       
       {showHistory && (

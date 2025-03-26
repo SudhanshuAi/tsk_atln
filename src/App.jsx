@@ -20,16 +20,17 @@ function App() {
   const [executionTime, setExecutionTime] = useState(null);
   const [showHistory, setShowHistory] = useState(false);
 
-  // Effect to set initial results
-  useEffect(() => {
-    setQueryResults(DUMMY_RESULTS[selectedQueryId]);
-  }, [selectedQueryId]);
+  // Remove the effect that sets initial results
+  // We want results to appear only after clicking Run Query
 
   // Handle query selection
   const handleQuerySelect = (queryId) => {
     const selectedQuery = PREDEFINED_QUERIES.find(q => q.id === queryId);
     setSelectedQueryId(queryId);
     setCurrentQuery(selectedQuery.query);
+    // Clear previous results when selecting a new query
+    setQueryResults(null);
+    setExecutionTime(null);
   };
 
   // Execute query

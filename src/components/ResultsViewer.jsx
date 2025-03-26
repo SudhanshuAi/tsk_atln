@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaTable, FaDownload, FaClock, FaSpinner } from 'react-icons/fa';
+import Skeleton from './Skeleton';
 import '../styles/ResultsViewer.css';
 
 const ResultsViewer = ({ 
@@ -36,7 +37,7 @@ const ResultsViewer = ({
       <div className="results-container">
         {isLoading ? (
           <div className="loading-spinner">
-            <div className="spinner"></div>
+            <FaSpinner className="result-spinner" />
           </div>
         ) : queryResults ? (
           <div className="table-container">
@@ -66,9 +67,7 @@ const ResultsViewer = ({
             </table>
           </div>
         ) : (
-          <div className="no-results">
-            No results to display. Run a query to see results.
-          </div>
+          <Skeleton />
         )}
       </div>
     </div>
