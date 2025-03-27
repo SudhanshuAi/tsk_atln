@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import useStore from '../../store';
 import PREDEFINED_QUERIES from '../../data/queries';
 import '../../styles/RecentQueries.css';
@@ -9,16 +9,15 @@ const RecentQueries = () => {
   const darkMode = useStore(state => state.darkMode);
   const currentQuery = useStore(state => state.currentQuery);
 
-  // Get query name from predefined queries, if available
-  const getQueryName = (query) => {
+  const getQueryName = useCallback((query) => {
     const predefinedQuery = PREDEFINED_QUERIES.find(q => q.query === query);
     return predefinedQuery ? predefinedQuery.name : "Custom Query";
-  };
+  }, []);
 
-  // Check if query is the currently selected one
-  const isSelectedQuery = (query) => {
-    return query === currentQuery;
-  };
+  const isSelectedQuery = useCallback((query) => 
+    query === currentQuery, [currentQuery]);
+
+  const handleLoadQuery = useCallback((query) => loadQuery(query), [loadQuery]);
 
   return (
     <div className="recent-queries">
@@ -32,7 +31,7 @@ const RecentQueries = () => {
             <div 
               key={index} 
               className={`history-item ${isSelectedQuery(query) ? 'is-selected' : ''} ${darkMode ? 'dark' : 'light'}`}
-              onClick={() => loadQuery(query)}
+              onClick={() => handleLoadQuery(query)}
               title={isSelectedQuery(query) ? "Currently selected query" : "Load this query"}
             >
               {getQueryName(query)}

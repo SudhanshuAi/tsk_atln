@@ -49,6 +49,31 @@ const PREDEFINED_QUERIES = [
     id: 10,
     name: "Customer Retention",
     query: "SELECT \n  EXTRACT(YEAR FROM first_order) as acquisition_year,\n  COUNT(DISTINCT customer_id) as total_customers,\n  SUM(CASE WHEN order_year = acquisition_year + 1 THEN 1 ELSE 0 END) as retained_customers,\n  ROUND(SUM(CASE WHEN order_year = acquisition_year + 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(DISTINCT customer_id), 2) as retention_rate\nFROM (\n  SELECT \n    c.customer_id,\n    MIN(EXTRACT(YEAR FROM o.order_date)) as first_order,\n    EXTRACT(YEAR FROM o.order_date) as order_year\n  FROM customers c\n  JOIN orders o ON c.customer_id = o.customer_id\n  GROUP BY c.customer_id, EXTRACT(YEAR FROM o.order_date)\n) AS customer_years\nGROUP BY acquisition_year\nORDER BY acquisition_year;"
+  },
+  {
+    id: 11,
+    name: "Top Selling Products",
+    query: "SELECT p.product_name, p.category, SUM(s.quantity) as total_units_sold,\nSUM(s.quantity * p.price) as revenue\nFROM products p\nJOIN sales s ON p.product_id = s.product_id\nGROUP BY p.product_name, p.category\nORDER BY total_units_sold DESC\nLIMIT 10;"
+  },
+  {
+    id: 12,
+    name: "Customer Lifetime Value",
+    query: "SELECT c.customer_name, c.email,\nCOUNT(DISTINCT o.order_id) as total_orders,\nSUM(o.order_amount) as lifetime_value,\nAVG(o.order_amount) as avg_order_value\nFROM customers c\nJOIN orders o ON c.customer_id = o.customer_id\nGROUP BY c.customer_name, c.email\nHAVING COUNT(DISTINCT o.order_id) >= 5\nORDER BY lifetime_value DESC;"
+  },
+  {
+    id: 13,
+    name: "Seasonal Sales Analysis",
+    query: "SELECT\n  EXTRACT(MONTH FROM order_date) as month,\n  EXTRACT(YEAR FROM order_date) as year,\n  p.category,\n  SUM(od.quantity) as units_sold,\n  SUM(od.quantity * p.price) as revenue\nFROM orders o\nJOIN order_details od ON o.order_id = od.order_id\nJOIN products p ON od.product_id = p.product_id\nWHERE order_date >= '2024-01-01'\nGROUP BY month, year, p.category\nORDER BY year, month, revenue DESC;"
+  },
+  {
+    id: 14,
+    name: "Customer Satisfaction",
+    query: "SELECT\n  p.category,\n  ROUND(AVG(r.rating), 2) as avg_rating,\n  COUNT(r.review_id) as total_reviews,\n  COUNT(CASE WHEN r.rating >= 4 THEN 1 END) as positive_reviews\nFROM products p\nJOIN reviews r ON p.product_id = r.product_id\nGROUP BY p.category\nORDER BY avg_rating DESC;"
+  },
+  {
+    id: 15,
+    name: "Inventory Turnover",
+    query: "SELECT\n  p.product_name,\n  p.category,\n  i.stock_quantity as current_stock,\n  SUM(s.quantity) as units_sold_last_30_days,\n  ROUND(SUM(s.quantity) * 30.0 / i.stock_quantity, 2) as turnover_rate\nFROM products p\nJOIN inventory i ON p.product_id = i.product_id\nJOIN sales s ON p.product_id = s.product_id\nWHERE s.sale_date >= CURRENT_DATE - INTERVAL '30 days'\nGROUP BY p.product_name, p.category, i.stock_quantity\nHAVING i.stock_quantity > 0\nORDER BY turnover_rate DESC;"
   }
 ];
 

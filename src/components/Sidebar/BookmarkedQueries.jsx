@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import useStore from '../../store';
 import PREDEFINED_QUERIES from '../../data/queries';
@@ -9,25 +9,18 @@ const BookmarkedQueries = () => {
   const loadQuery = useStore(state => state.loadQuery);
   const removeBookmark = useStore(state => state.removeBookmark);
   const darkMode = useStore(state => state.darkMode);
-  const selectedQueryId = useStore(state => state.selectedQueryId);
   const currentQuery = useStore(state => state.currentQuery);
 
-  // Get query name from predefined queries, if available
-  const getQueryName = (query) => {
+  const getQueryName = useCallback((query) => {
     const predefinedQuery = PREDEFINED_QUERIES.find(q => q.query === query);
     return predefinedQuery ? predefinedQuery.name : "Custom Query";
-  };
+  }, []);
 
-  // Check if query is the currently selected one
-  const isSelectedQuery = (query) => {
-    return query === currentQuery;
-  };
+  const isSelectedQuery = useCallback((query) => 
+    query === currentQuery, [currentQuery]);
 
-  // Get predefined query ID if it exists
-  const getPredefinedQueryId = (query) => {
-    const predefinedQuery = PREDEFINED_QUERIES.find(q => q.query === query);
-    return predefinedQuery ? predefinedQuery.id : null;
-  };
+  const handleLoadQuery = useCallback((query) => loadQuery(query), [loadQuery]);
+  const handleRemoveBookmark = useCallback((query) => removeBookmark(query), [removeBookmark]);
 
   return (
     <div className="bookmarked-queries">
@@ -38,17 +31,20 @@ const BookmarkedQueries = () => {
       <div className={`history-list ${darkMode ? 'dark' : 'light'}`}>
         {bookmarkedQueries.length > 0 ? (
           bookmarkedQueries.map((query, index) => (
-            <div key={index} className={`bookmark-item ${isSelectedQuery(query) ? 'is-selected' : ''}`}>
+            <div 
+              key={index} 
+              className={`bookmark-item ${isSelectedQuery(query) ? 'is-selected' : ''}`}
+            >
               <div 
                 className="bookmark-text"
-                onClick={() => loadQuery(query)}
+                onClick={() => handleLoadQuery(query)}
                 title={isSelectedQuery(query) ? "Currently selected query" : "Load this query"}
               >
                 {getQueryName(query)}
               </div>
               <button 
                 className="remove-bookmark-btn"
-                onClick={() => removeBookmark(query)}
+                onClick={() => handleRemoveBookmark(query)}
                 title="Remove bookmark"
               >
                 <FaTimes />
@@ -63,4 +59,4 @@ const BookmarkedQueries = () => {
   );
 };
 
-export default BookmarkedQueries; 
+export default BookmarkedQueries;

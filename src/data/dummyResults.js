@@ -143,6 +143,65 @@ const DUMMY_RESULTS = {
         { acquisition_year: 2023, total_customers: 2100, retained_customers: 1554, retention_rate: 74.00 },
         { acquisition_year: 2024, total_customers: 2450, retained_customers: 0, retention_rate: 0.00 }
       ]
+    },
+    11: {
+      columns: ["product_name", "category", "total_units_sold", "revenue"],
+      rows: [
+        { product_name: "Wireless Earbuds Pro", category: "Electronics", total_units_sold: 1250, revenue: 124875.00 },
+        { product_name: "Smart Fitness Watch", category: "Electronics", total_units_sold: 980, revenue: 195980.00 },
+        { product_name: "Premium Running Shoes", category: "Sports", total_units_sold: 850, revenue: 76500.00 },
+        { product_name: "Organic Green Tea", category: "Food", total_units_sold: 780, revenue: 15560.00 },
+        { product_name: "Yoga Mat Premium", category: "Fitness", total_units_sold: 720, revenue: 21580.00 },
+        { product_name: "Bluetooth Speaker XL", category: "Electronics", total_units_sold: 680, revenue: 54360.00 },
+        { product_name: "Protein Powder", category: "Food", total_units_sold: 650, revenue: 32450.00 },
+        { product_name: "Gaming Mouse", category: "Electronics", total_units_sold: 620, revenue: 43400.00 },
+        { product_name: "Resistance Bands Set", category: "Fitness", total_units_sold: 580, revenue: 17400.00 },
+        { product_name: "Water Bottle", category: "Sports", total_units_sold: 550, revenue: 16480.00 }
+      ]
+    },
+    12: {
+      columns: ["customer_name", "email", "total_orders", "lifetime_value", "avg_order_value"],
+      rows: [
+        { customer_name: "Sarah Williams", email: "sarah.w@email.com", total_orders: 28, lifetime_value: 8450.75, avg_order_value: 301.81 },
+        { customer_name: "David Chen", email: "david.c@email.com", total_orders: 25, lifetime_value: 7250.50, avg_order_value: 290.02 },
+        { customer_name: "Maria Garcia", email: "maria.g@email.com", total_orders: 22, lifetime_value: 6780.25, avg_order_value: 308.19 },
+        { customer_name: "Alex Thompson", email: "alex.t@email.com", total_orders: 20, lifetime_value: 5890.00, avg_order_value: 294.50 },
+        { customer_name: "Lisa Brown", email: "lisa.b@email.com", total_orders: 18, lifetime_value: 5450.75, avg_order_value: 302.82 },
+        { customer_name: "Kevin Lee", email: "kevin.l@email.com", total_orders: 15, lifetime_value: 4100.50, avg_order_value: 273.37 }
+      ]
+    },
+    13: {
+      columns: ["month", "year", "category", "units_sold", "revenue"],
+      rows: [
+        { month: 1, year: 2024, category: "Electronics", units_sold: 450, revenue: 89750.00 },
+        { month: 1, year: 2024, category: "Clothing", units_sold: 380, revenue: 45600.00 },
+        { month: 2, year: 2024, category: "Electronics", units_sold: 520, revenue: 104000.00 },
+        { month: 2, year: 2024, category: "Sports", units_sold: 290, revenue: 34800.00 },
+        { month: 3, year: 2024, category: "Electronics", units_sold: 480, revenue: 96000.00 },
+        { month: 3, year: 2024, category: "Beauty", units_sold: 320, revenue: 25600.00 }
+      ]
+    },
+    14: {
+      columns: ["category", "avg_rating", "total_reviews", "positive_reviews"],
+      rows: [
+        { category: "Electronics", avg_rating: 4.5, total_reviews: 2450, positive_reviews: 1960 },
+        { category: "Sports", avg_rating: 4.3, total_reviews: 1850, positive_reviews: 1480 },
+        { category: "Beauty", avg_rating: 4.2, total_reviews: 1650, positive_reviews: 1320 },
+        { category: "Home Goods", avg_rating: 4.1, total_reviews: 1450, positive_reviews: 1160 },
+        { category: "Clothing", avg_rating: 4.0, total_reviews: 2150, positive_reviews: 1720 },
+        { category: "Food", avg_rating: 3.9, total_reviews: 950, positive_reviews: 760 }
+      ]
+    },
+    15: {
+      columns: ["product_name", "category", "current_stock", "units_sold_last_30_days", "turnover_rate"],
+      rows: [
+        { product_name: "Wireless Earbuds Pro", category: "Electronics", current_stock: 100, units_sold_last_30_days: 85, turnover_rate: 25.5 },
+        { product_name: "Running Shoes Elite", category: "Sports", current_stock: 80, units_sold_last_30_days: 60, turnover_rate: 22.5 },
+        { product_name: "Smart Watch Series 5", category: "Electronics", current_stock: 150, units_sold_last_30_days: 95, turnover_rate: 19.0 },
+        { product_name: "Yoga Mat Premium", category: "Fitness", current_stock: 120, units_sold_last_30_days: 75, turnover_rate: 18.75 },
+        { product_name: "Gaming Keyboard", category: "Electronics", current_stock: 200, units_sold_last_30_days: 110, turnover_rate: 16.5 },
+        { product_name: "Protein Powder Plus", category: "Food", current_stock: 180, units_sold_last_30_days: 90, turnover_rate: 15.0 }
+      ]
     }
   };
   

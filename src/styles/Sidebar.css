@@ -1,143 +1,204 @@
 /* Sidebar.css - Styles for the sidebar component */
 
 .sidebar {
-    width: 250px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-  
-  .sidebar.light {
-    background-color: white;
-    border-right: 1px solid #e5e7eb;
-  }
-  
-  .sidebar.dark {
-    background-color: #2d3748;
-    border-right: 1px solid #1a202c;
-  }
-  
-  /* Sidebar tabs */
-  .sidebar-tabs {
-    display: flex;
-    justify-content: center;
-    padding: 12px;
-    border-bottom: 1px solid;
-  }
-  
-  .sidebar.light .sidebar-tabs {
-    border-color: #e5e7eb;
-  }
-  
-  .sidebar.dark .sidebar-tabs {
-    border-color: #1a202c;
-  }
-  
-  .sidebar-tab {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    margin: 0 4px;
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
-    font-size: 1.2rem;
-    transition: all 0.2s ease;
-  }
-  
-  .sidebar.light .sidebar-tab {
-    color: #64748b;
-  }
-  
-  .sidebar.light .sidebar-tab:hover {
-    background-color: #f1f5f9;
-    color: #334155;
-  }
-  
-  .sidebar.light .sidebar-tab.active {
-    background-color: #e0e7ff;
-    color: #4f46e5;
-  }
-  
-  .sidebar.dark .sidebar-tab {
-    color: #94a3b8;
-  }
-  
-  .sidebar.dark .sidebar-tab:hover {
-    background-color: #475569;
-    color: #e2e8f0;
-  }
-  
-  .sidebar.dark .sidebar-tab.active {
-    background-color: #4338ca;
-    color: white;
-  }
-  
-  .sidebar-content {
-    flex: 1;
-    overflow-y: auto;
-    scrollbar-width: none; /* For Firefox */
-  }
-  
-  .sidebar-content::-webkit-scrollbar {
-    display: none; /* For Chrome, Safari, and Opera */
-  }
- 
-  
-  /* Utility class for hidden components */
-  .hidden {
-    display: none;
-  }
-  
-  /* Sidebar footer */
-  .sidebar-footer {
-    border-top: 1px solid;
-    padding: 12px;
-  }
-  
-  .sidebar.light .sidebar-footer {
-    border-color: #e5e7eb;
-    background-color: #f9fafb;
-  }
-  
-  .sidebar.dark .sidebar-footer {
-    border-color: #1a202c;
-    background-color: #1e293b;
-  }
-  
-  /* Common sidebar elements */
-  .sidebar-heading-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-  
-  .sidebar-icon {
-    font-size: 0.9rem;
-  }
-  
-  .sidebar-up {
-    margin-bottom: 6px;
-  }
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  overflow: visible; /* Changed from hidden to visible to show the toggle button */
+  position: relative;
+  transition: width 0.3s ease;
+  height: 100%; /* Ensure full height */
+}
 
-  .sidebar-heading {
-    font-size: 1rem;
-    font-weight: bold;
-    text-align: center;
-    width: 100%;
-  }
-  
-  .sidebar-heading-container:hover {
-    cursor: pointer;
-  }
-  
-  .empty-history {
-    text-align: center;
-    font-style: italic;
-    color: #9ca3af;
-    padding: 8px;
-  }
+.sidebar.closed {
+  width: 0;
+}
+
+.sidebar.light {
+  background-color: white;
+  border-right: 1px solid #e5e7eb;
+}
+
+.sidebar.dark {
+  background-color: #2d3748;
+  border-right: 1px solid #1a202c;
+}
+
+/* Toggle button */
+.sidebar-toggle {
+  position: absolute;
+  right: -16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  border-radius: 0 4px 4px 0;
+  transition: background-color 0.2s ease;
+  z-index: 1000; /* Ensure button stays above other elements */
+}
+
+.sidebar-toggle.light {
+  background-color: rgb(240, 246, 253);
+  color: #64748b;
+  border: 1px solid #e5e7eb;
+  border-left: none;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05); /* Added shadow for better visibility */
+}
+
+.sidebar-toggle.dark {
+  background-color: #2d3748;
+  color: #94a3b8;
+  border: 1px solid #1a202c;
+  border-left: none;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.2); /* Added shadow for better visibility */
+}
+
+.sidebar-toggle.light:hover {
+  background-color: #f1f5f9;
+  color: #334155;
+}
+
+.sidebar-toggle.dark:hover {
+  background-color: #475569;
+  color: #e2e8f0;
+}
+
+/* Sidebar tabs */
+.sidebar-tabs {
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+  border-bottom: 1px solid;
+}
+
+.sidebar.light .sidebar-tabs {
+  border-color: #e5e7eb;
+}
+
+.sidebar.dark .sidebar-tabs {
+  border-color: #1a202c;
+}
+
+.sidebar-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  margin: 0 4px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
+}
+
+.sidebar.light .sidebar-tab {
+  color: #64748b;
+}
+
+.sidebar.light .sidebar-tab:hover {
+  background-color: #f1f5f9;
+  color: #334155;
+}
+
+.sidebar.light .sidebar-tab.active {
+  background-color: #e0e7ff;
+  color: #4f46e5;
+}
+
+.sidebar.dark .sidebar-tab {
+  color: #94a3b8;
+}
+
+.sidebar.dark .sidebar-tab:hover {
+  background-color: #475569;
+  color: #e2e8f0;
+}
+
+.sidebar.dark .sidebar-tab.active {
+  background-color: #4338ca;
+  color: white;
+}
+
+/* Sidebar content */
+.sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: none; /* For Firefox */
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.sidebar.closed .sidebar-content,
+.sidebar.closed .sidebar-tabs,
+.sidebar.closed .sidebar-footer {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sidebar-content::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
+}
+
+/* Utility class for hidden components */
+.hidden {
+  display: none;
+}
+
+/* Sidebar footer */
+.sidebar-footer {
+  border-top: 1px solid;
+  padding: 12px;
+}
+
+.sidebar.light .sidebar-footer {
+  border-color: #e5e7eb;
+  background-color: #f9fafb;
+}
+
+.sidebar.dark .sidebar-footer {
+  border-color: #1a202c;
+  background-color: #1e293b;
+}
+
+/* Common sidebar elements */
+.sidebar-heading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sidebar-icon {
+  font-size: 0.9rem;
+}
+
+.sidebar-up {
+  margin-bottom: 6px;
+}
+
+.sidebar-heading {
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+}
+
+.sidebar-heading-container:hover {
+  cursor: pointer;
+}
+
+.empty-history {
+  text-align: center;
+  font-style: italic;
+  color: #9ca3af;
+  padding: 8px;
+}
