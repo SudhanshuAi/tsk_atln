@@ -23,6 +23,7 @@ const useStore = create(
       showHistory: true,
       showBookmarks: true,
       queryEditorHeight: 40, // percentage
+      sidebarView: 'predefined', // 'predefined', 'bookmarked', or 'recent'
       
       // Actions
       setCurrentQuery: (query) => set({ currentQuery: query }),
@@ -35,6 +36,8 @@ const useStore = create(
           queryResults: null,
           executionTime: null
         });
+        
+        // No section switching - user stays in their current section
       },
       
       executeQuery: () => {
@@ -74,7 +77,8 @@ const useStore = create(
           set({ 
             bookmarkedQueries: [...bookmarkedQueries, currentQuery],
             // Show bookmarks section when adding a new bookmark
-            showBookmarks: true
+            showBookmarks: true,
+            sidebarView: 'bookmarked'
           });
         }
       },
@@ -87,11 +91,18 @@ const useStore = create(
       },
       
       loadQuery: (query) => {
+        // Find the matching predefined query ID if it exists
+        const matchingPredefinedQuery = PREDEFINED_QUERIES.find(q => q.query === query);
+        
         set({ 
           currentQuery: query,
+          // Update the selected query ID if a matching predefined query is found
+          ...(matchingPredefinedQuery && { selectedQueryId: matchingPredefinedQuery.id }),
           queryResults: null,
           executionTime: null
         });
+        
+        // Removed the automatic section switching - user stays in their current section
       },
       
       exportResults: () => {
@@ -121,6 +132,7 @@ const useStore = create(
       setShowBookmarks: (value) => set({ showBookmarks: value }),
       toggleBookmarks: () => set(state => ({ showBookmarks: !state.showBookmarks })),
       setQueryEditorHeight: (height) => set({ queryEditorHeight: height }),
+      setSidebarView: (view) => set({ sidebarView: view }),
     }),
     {
       name: 'sql-editor-storage',
@@ -131,7 +143,8 @@ const useStore = create(
         recentQueries: state.recentQueries,
         queryEditorHeight: state.queryEditorHeight,
         showHistory: state.showHistory,
-        showBookmarks: state.showBookmarks
+        showBookmarks: state.showBookmarks,
+        sidebarView: state.sidebarView
       })
     }
   )

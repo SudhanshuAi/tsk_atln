@@ -1,55 +1,47 @@
 import React from 'react';
-import { FaHistory, FaChevronUp, FaChevronDown } from 'react-icons/fa';
 import useStore from '../../store';
 import PREDEFINED_QUERIES from '../../data/queries';
+import '../../styles/RecentQueries.css';
 
 const RecentQueries = () => {
   const recentQueries = useStore(state => state.recentQueries);
-  const showHistory = useStore(state => state.showHistory);
-  const toggleHistory = useStore(state => state.toggleHistory);
   const loadQuery = useStore(state => state.loadQuery);
   const darkMode = useStore(state => state.darkMode);
+  const currentQuery = useStore(state => state.currentQuery);
 
   // Get query name from predefined queries, if available
   const getQueryName = (query) => {
     const predefinedQuery = PREDEFINED_QUERIES.find(q => q.query === query);
-    return predefinedQuery.name;
+    return predefinedQuery ? predefinedQuery.name : "Custom Query";
+  };
+
+  // Check if query is the currently selected one
+  const isSelectedQuery = (query) => {
+    return query === currentQuery;
   };
 
   return (
     <div className="recent-queries">
-      <div 
-        className="recent-header"
-        onClick={toggleHistory}
-        title={showHistory ? "Hide history" : "Show history"}
-      >
-        <div className="sidebar-heading-container">
-          <FaHistory className="sidebar-icon" />
-          <h2 className="sidebar-heading">Recent Queries</h2>
-        </div>
-        <div className="sidebar-up">
-          {showHistory ? <FaChevronUp /> : <FaChevronDown />}
-        </div>
+      <div className="sidebar-heading-container">
+        <h2 className="sidebar-heading">Recent Queries</h2>
       </div>
       
-      {showHistory && (
-        <div className={`history-list ${darkMode ? 'dark' : 'light'}`}>
-          {recentQueries.length > 0 ? (
-            recentQueries.map((query, index) => (
-              <div 
-                key={index} 
-                className={`history-item ${darkMode ? 'dark' : 'light'}`}
-                onClick={() => loadQuery(query)}
-                title="Load this query"
-              >
-                {getQueryName(query)}
-              </div>
-            ))
-          ) : (
-            <p className="empty-history">No recent queries</p>
-          )}
-        </div>
-      )}
+      <div className={`history-list ${darkMode ? 'dark' : 'light'}`}>
+        {recentQueries.length > 0 ? (
+          recentQueries.map((query, index) => (
+            <div 
+              key={index} 
+              className={`history-item ${isSelectedQuery(query) ? 'is-selected' : ''} ${darkMode ? 'dark' : 'light'}`}
+              onClick={() => loadQuery(query)}
+              title={isSelectedQuery(query) ? "Currently selected query" : "Load this query"}
+            >
+              {getQueryName(query)}
+            </div>
+          ))
+        ) : (
+          <p className="empty-history">No recent queries</p>
+        )}
+      </div>
     </div>
   );
 };

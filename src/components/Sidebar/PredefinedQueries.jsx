@@ -1,6 +1,6 @@
 import React from 'react';
-import { FaListAlt } from 'react-icons/fa';
 import useStore from '../../store';
+import '../../styles/PredefinedQueries.css';
 
 const PredefinedQueries = ({ queries }) => {
   const selectedQueryId = useStore(state => state.selectedQueryId);
@@ -10,9 +10,9 @@ const PredefinedQueries = ({ queries }) => {
   return (
     <div className="predefined-queries">
       <div className="sidebar-heading-container">
-        <FaListAlt className="sidebar-icon" />
         <h2 className="sidebar-heading">Predefined Queries</h2>
       </div>
+      
       <div className="query-list">
         {queries.map(query => (
           <button

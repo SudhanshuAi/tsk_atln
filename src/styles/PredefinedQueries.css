@@ -1,0 +1,52 @@
+/* PredefinedQueries.css - Styles for the predefined queries component */
+
+.predefined-queries {
+  padding: 16px;
+  flex: 1;
+}
+
+.query-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.query-item {
+  display: block;
+  text-align: left;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.query-item.light {
+  background-color: #f9fafb;
+}
+
+.query-item.light:hover {
+  background-color: #f3f4f6;
+}
+
+.query-item.dark {
+  background-color: #374151;
+  color: white;
+}
+
+.query-item.dark:hover {
+  background-color: #4b5563;
+}
+
+.query-item.selected.light {
+  background-color: #e0e7ff;
+  color: #4f46e5;
+  font-weight: 500;
+}
+
+.query-item.selected.dark {
+  background-color: #4338ca;
+  color: white;
+  font-weight: 500;
+} 

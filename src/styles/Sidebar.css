@@ -17,10 +17,102 @@
     border-right: 1px solid #1a202c;
   }
   
-  .sidebar-heading-container {
+  /* Sidebar tabs */
+  .sidebar-tabs {
+    display: flex;
+    justify-content: center;
+    padding: 12px;
+    border-bottom: 1px solid;
+  }
+  
+  .sidebar.light .sidebar-tabs {
+    border-color: #e5e7eb;
+  }
+  
+  .sidebar.dark .sidebar-tabs {
+    border-color: #1a202c;
+  }
+  
+  .sidebar-tab {
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    margin: 0 4px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.2s ease;
+  }
+  
+  .sidebar.light .sidebar-tab {
+    color: #64748b;
+  }
+  
+  .sidebar.light .sidebar-tab:hover {
+    background-color: #f1f5f9;
+    color: #334155;
+  }
+  
+  .sidebar.light .sidebar-tab.active {
+    background-color: #e0e7ff;
+    color: #4f46e5;
+  }
+  
+  .sidebar.dark .sidebar-tab {
+    color: #94a3b8;
+  }
+  
+  .sidebar.dark .sidebar-tab:hover {
+    background-color: #475569;
+    color: #e2e8f0;
+  }
+  
+  .sidebar.dark .sidebar-tab.active {
+    background-color: #4338ca;
+    color: white;
+  }
+  
+  .sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: none; /* For Firefox */
+  }
+  
+  .sidebar-content::-webkit-scrollbar {
+    display: none; /* For Chrome, Safari, and Opera */
+  }
+ 
+  
+  /* Utility class for hidden components */
+  .hidden {
+    display: none;
+  }
+  
+  /* Sidebar footer */
+  .sidebar-footer {
+    border-top: 1px solid;
+    padding: 12px;
+  }
+  
+  .sidebar.light .sidebar-footer {
+    border-color: #e5e7eb;
+    background-color: #f9fafb;
+  }
+  
+  .sidebar.dark .sidebar-footer {
+    border-color: #1a202c;
+    background-color: #1e293b;
+  }
+  
+  /* Common sidebar elements */
+  .sidebar-heading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-bottom: 12px;
   }
   
@@ -35,192 +127,12 @@
   .sidebar-heading {
     font-size: 1rem;
     font-weight: bold;
-  }
-  
-  /* Predefined Queries Section */
-  .predefined-queries {
-    padding: 16px;
-    flex: 1;
-  }
-  
-  .query-list {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  
-  .query-item {
-    display: block;
-    text-align: left;
-    padding: 8px 12px;
-    border-radius: 4px;
-    border: none;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background-color 0.2s;
-  }
-  
-  .query-item.light {
-    background-color: #f9fafb;
-  }
-  
-  .query-item.light:hover {
-    background-color: #f3f4f6;
-  }
-  
-  .query-item.dark {
-    background-color: #374151;
-    color: white;
-  }
-  
-  .query-item.dark:hover {
-    background-color: #4b5563;
-  }
-  
-  .query-item.selected.light {
-    background-color: #e0e7ff;
-    color: #4f46e5;
-    font-weight: 500;
-  }
-  
-  .query-item.selected.dark {
-    background-color: #4338ca;
-    color: white;
-    font-weight: 500;
-  }
-  
-  /* Recent Queries Section */
-  .sidebar-footer {
-    padding: 16px;
-    border-top: 1px solid;
-  }
-  
-  .sidebar-footer.light {
-    border-color: #e5e7eb;
-  }
-  
-  .sidebar-footer.dark {
-    border-color: #1a202c;
-  }
-  
-  .recent-queries,
-  .bookmarked-queries {
-    margin-bottom: 7px;
-  }
-  
-  /* Border and shadow between bookmarked and recent queries */
-  .bookmarked-queries {
-    position: relative;
-    padding-bottom: 7px;
-  }
-  
-  .bookmarked-queries::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 5%;
-    width: 90%;
-    height: 2px;
-    background: linear-gradient(to right, transparent, rgba(203, 213, 225, 0.5), transparent);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  }
-  
-  .dark .bookmarked-queries::after {
-    background: linear-gradient(to right, transparent, rgba(71, 85, 105, 0.5), transparent);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  }
-  
-  .recent-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-    cursor: pointer;
+    text-align: center;
+    width: 100%;
   }
   
   .sidebar-heading-container:hover {
     cursor: pointer;
-  }
-  
-  .history-list {
-    margin-top: 8px;
-  }
-  
-  .history-item {
-    padding: 8px;
-    border-radius: 4px;
-    margin-bottom: 4px;
-    font-size: 0.85rem;
-    font-family: monospace;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    cursor: pointer;
-    background-color: #f3f4f6;
-  }
-  
-  .history-item:hover {
-    opacity: 0.8;
-  }
-  
-  .history-item.dark {
-    background-color: #374151;
-  }
-  
-  /* Bookmarked Queries */
-  .bookmark-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px;
-    border-radius: 4px;
-    margin-bottom: 4px;
-    font-size: 0.85rem;
-    font-family: monospace;
-    background-color: #f3f4f6;
-  }
-  
-  .dark .bookmark-item {
-    background-color: #374151;
-  }
-  
-  .bookmark-text {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    cursor: pointer;
-    flex: 1;
-  }
-  
-  .bookmark-text:hover {
-    opacity: 0.8;
-  }
-  
-  .remove-bookmark-btn {
-    background: none;
-    border: none;
-    color: #9ca3af;
-    cursor: pointer;
-    font-size: 0.8rem;
-    padding: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-  }
-  
-  .remove-bookmark-btn:hover {
-    background-color: rgba(0, 0, 0, 0.1);
-    color: #333333;
-  }
-  
-  .dark .remove-bookmark-btn {
-    color: #d1d5db;
-  }
-  
-  .dark .remove-bookmark-btn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #e0e0e0;
   }
   
   .empty-history {
@@ -228,13 +140,4 @@
     font-style: italic;
     color: #9ca3af;
     padding: 8px;
-  }
-
-  /* Sidebar heading icons */
-  .bookmarked-queries .sidebar-icon {
-    color: black;
-  }
-
-  .dark .bookmarked-queries .sidebar-icon {
-    color: white;
   }

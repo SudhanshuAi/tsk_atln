@@ -1,0 +1,84 @@
+/* BookmarkedQueries.css - Styles for the bookmarked queries component */
+
+.bookmarked-queries {
+  padding: 16px;
+}
+
+/* Sidebar heading icons */
+.bookmarked-queries .sidebar-icon {
+  color: black;
+}
+
+.dark .bookmarked-queries .sidebar-icon {
+  color: white;
+}
+
+.bookmark-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+  font-family: monospace;
+  background-color: #f3f4f6;
+  position: relative;
+}
+
+.dark .bookmark-item {
+  background-color: #374151;
+}
+
+.bookmark-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  flex: 1;
+  padding: 8px;
+  position: relative;
+}
+
+.bookmark-text:hover {
+  opacity: 0.8;
+}
+
+.bookmark-item.is-selected .bookmark-text {
+  background-color: #dbeafe;
+  border-left: none;
+  padding-left: 8px; /* Reset to normal padding */
+}
+
+.dark .bookmark-item.is-selected .bookmark-text {
+  background-color: #3b82f6;
+  border-left-color: transparent;
+  color: white;
+}
+
+.remove-bookmark-btn {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.remove-bookmark-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #333333;
+}
+
+.dark .remove-bookmark-btn {
+  color: #d1d5db;
+}
+
+.dark .remove-bookmark-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #e0e0e0;
+} 
