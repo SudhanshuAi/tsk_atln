@@ -46,7 +46,8 @@ const SearchQueries = () => {
         id: query.id, 
         name: query.name, 
         type: 'predefined', 
-        query: query.query 
+        query: query.query,
+        isBookmarked: bookmarkedQueries.includes(query.query)
       })),
       ...recentQueries.filter(queryText => {
         const query = PREDEFINED_QUERIES.find(q => q.query === queryText);
@@ -60,7 +61,8 @@ const SearchQueries = () => {
           id: query?.id, 
           name: query?.name || 'Custom Query', 
           type: 'recent', 
-          query: queryText 
+          query: queryText,
+          isBookmarked: bookmarkedQueries.includes(queryText)
         };
       }),
       ...bookmarkedQueries.filter(queryText => {
@@ -75,13 +77,21 @@ const SearchQueries = () => {
           id: query?.id, 
           name: query?.name || 'Custom Query', 
           type: 'bookmarked', 
-          query: queryText 
+          query: queryText,
+          isBookmarked: true
         };
       })
     ];
     
     setSearchResults(Array.from(new Map(results.map(item => [item.query, item])).values()));
   }, [bookmarkedQueries, recentQueries]);
+
+  // Re-run search when bookmarked queries change
+  useEffect(() => {
+    if (searchTerm.trim() && isSearching) {
+      performSearch(searchTerm);
+    }
+  }, [bookmarkedQueries, performSearch, searchTerm, isSearching]);
 
   const handleResultClick = useCallback((result) => {
     // First switch to predefined view
@@ -136,7 +146,7 @@ const SearchQueries = () => {
               onClick={() => handleResultClick(result)}
             >
               <span className="search-result-name">{result.name}</span>
-              {result.type === 'bookmarked' && (
+              {result.isBookmarked && (
                 <span className={`search-result-badge ${darkMode ? 'dark' : 'light'} bookmarked`}>
                   bookmarked
                 </span>

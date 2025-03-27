@@ -19,8 +19,12 @@ const BookmarkedQueries = () => {
   const isSelectedQuery = useCallback((query) => 
     query === currentQuery, [currentQuery]);
 
+  const handleRemoveBookmark = useCallback((query, e) => {
+    e.stopPropagation(); // Prevent triggering loadQuery
+    removeBookmark(query);
+  }, [removeBookmark]);
+
   const handleLoadQuery = useCallback((query) => loadQuery(query), [loadQuery]);
-  const handleRemoveBookmark = useCallback((query) => removeBookmark(query), [removeBookmark]);
 
   return (
     <div className="bookmarked-queries">
@@ -44,7 +48,7 @@ const BookmarkedQueries = () => {
               </div>
               <button 
                 className="remove-bookmark-btn"
-                onClick={() => handleRemoveBookmark(query)}
+                onClick={(e) => handleRemoveBookmark(query, e)}
                 title="Remove bookmark"
               >
                 <FaTimes />

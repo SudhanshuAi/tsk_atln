@@ -54,19 +54,26 @@ const useStore = create(
         const { currentQuery, bookmarkedQueries } = get();
         const isBookmarked = bookmarkedQueries.includes(currentQuery);
         
-        set({ 
-          bookmarkedQueries: isBookmarked
-            ? bookmarkedQueries.filter(q => q !== currentQuery)
-            : [...bookmarkedQueries, currentQuery],
-          sidebarView: isBookmarked ? 'predefined' : 'bookmarked'
-        });
+        if (isBookmarked) {
+          // When unbookmarking, just update the bookmarks array
+          set({ 
+            bookmarkedQueries: bookmarkedQueries.filter(q => q !== currentQuery)
+          });
+        } else {
+          // When bookmarking, update bookmarks and switch to bookmarked view
+          set({ 
+            bookmarkedQueries: [...bookmarkedQueries, currentQuery],
+            sidebarView: 'bookmarked'
+          });
+        }
       },
       
       removeBookmark: (query) => {
-        set(state => ({ 
-          bookmarkedQueries: state.bookmarkedQueries.filter(q => q !== query),
-          sidebarView: state.bookmarkedQueries.length === 1 ? 'predefined' : state.sidebarView
-        }));
+        const { bookmarkedQueries } = get();
+        const updatedBookmarks = bookmarkedQueries.filter(q => q !== query);
+        
+        // Only update bookmarks array, don't change the sidebar view
+        set({ bookmarkedQueries: [...updatedBookmarks] });
       },
       
       loadQuery: (query) => {
