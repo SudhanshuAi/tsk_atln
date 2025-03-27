@@ -1,15 +1,16 @@
 import React from 'react';
 import { FaTable, FaDownload, FaClock, FaSpinner } from 'react-icons/fa';
-import Skeleton from './Skeleton';
+import TableSkeleton from './Skeleton';
+import useStore from '../store';
 import '../styles/ResultsViewer.css';
 
-const ResultsViewer = ({ 
-  queryResults, 
-  isLoading, 
-  executionTime, 
-  exportResults, 
-  darkMode 
-}) => {
+const ResultsViewer = () => {
+  const queryResults = useStore(state => state.queryResults);
+  const isLoading = useStore(state => state.isLoading);
+  const executionTime = useStore(state => state.executionTime);
+  const exportResults = useStore(state => state.exportResults);
+  const darkMode = useStore(state => state.darkMode);
+
   return (
     <div className={`results-viewer ${darkMode ? 'dark' : 'light'}`}>
       <div className="results-header">
@@ -67,7 +68,7 @@ const ResultsViewer = ({
             </table>
           </div>
         ) : (
-          <Skeleton />
+          <TableSkeleton />
         )}
       </div>
     </div>

@@ -59,6 +59,7 @@
     border: 1px solid #e2e8f0;
     border-radius: 6px;
     overflow: hidden;
+    padding: 8px;
   }
   
   .dark .skeleton-table {
@@ -67,70 +68,27 @@
   
   .skeleton-header {
     display: flex;
-    background-color: #f8fafc;
-  }
-  
-  .dark .skeleton-header {
-    background-color: #0f172a;
+    gap: 8px;
+    margin-bottom: 16px;
   }
   
   .skeleton-row {
     display: flex;
-  }
-  
-  .skeleton-row:nth-child(odd) {
-    background-color: #ffffff;
-  }
-  
-  .skeleton-row:nth-child(even) {
-    background-color: #f8fafc;
-  }
-  
-  .dark .skeleton-row:nth-child(odd) {
-    background-color: #1e293b;
-  }
-  
-  .dark .skeleton-row:nth-child(even) {
-    background-color: #0f172a;
+    gap: 8px;
+    margin-bottom: 8px;
   }
   
   .skeleton-cell {
     flex: 1;
-    height: 40px;
-    padding: 12px;
-    position: relative;
-    overflow: hidden;
   }
   
-  .skeleton-cell::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    animation: skeleton-loading 1.5s infinite;
+  /* React Loading Skeleton customization */
+  .dark .react-loading-skeleton {
+    --base-color: #1e293b;
+    --highlight-color: #2d3748;
   }
   
-  .dark .skeleton-cell::after {
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
-  }
-  
-  .skeleton-cell.header {
-    height: 48px;
-    background-color: #f1f5f9;
-  }
-  
-  .dark .skeleton-cell.header {
-    background-color: #1e293b;
-  }
-  
-  @keyframes skeleton-loading {
-    0% {
-      transform: translateX(-100%);
-    }
-    100% {
-      transform: translateX(100%);
-    }
+  .light .react-loading-skeleton {
+    --base-color: #e2e8f0;
+    --highlight-color: #f1f5f9;
   }

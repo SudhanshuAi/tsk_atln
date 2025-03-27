@@ -42,6 +42,15 @@
     overflow: hidden;
   }
   
+  /* Query Editor and Results Viewer Wrappers */
+  .query-editor-wrapper, 
+  .results-viewer-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  
   /* Scrollbar styling */
   ::-webkit-scrollbar {
     width: 8px;

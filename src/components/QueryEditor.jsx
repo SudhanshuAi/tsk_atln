@@ -1,15 +1,20 @@
 import React from 'react';
-import { FaPlay, FaBookmark, FaSpinner, FaCode } from 'react-icons/fa';
+import { FaPlay, FaBookmark as FaBookmarkSolid, FaRegBookmark, FaSpinner, FaCode } from 'react-icons/fa';
+import useStore from '../store';
 import '../styles/QueryEditor.css';
 
-const QueryEditor = ({ 
-  currentQuery, 
-  setCurrentQuery, 
-  executeQuery, 
-  bookmarkQuery, 
-  isLoading, 
-  darkMode 
-}) => {
+const QueryEditor = () => {
+  const currentQuery = useStore(state => state.currentQuery);
+  const setCurrentQuery = useStore(state => state.setCurrentQuery);
+  const executeQuery = useStore(state => state.executeQuery);
+  const bookmarkQuery = useStore(state => state.bookmarkQuery);
+  const bookmarkedQueries = useStore(state => state.bookmarkedQueries);
+  const isLoading = useStore(state => state.isLoading);
+  const darkMode = useStore(state => state.darkMode);
+
+  // Check if current query is bookmarked
+  const isBookmarked = bookmarkedQueries.includes(currentQuery);
+
   return (
     <div className={`query-editor ${darkMode ? 'dark' : 'light'}`}>
       <div className="editor-header">
@@ -20,10 +25,10 @@ const QueryEditor = ({
         <div className="editor-controls">
           <button 
             onClick={bookmarkQuery}
-            className="bookmark-btn"
-            title="Bookmark Query"
+            className={`bookmark-btn ${isBookmarked ? 'bookmarked' : ''}`}
+            title={isBookmarked ? "Remove Bookmark" : "Bookmark Query"}
           >
-            <FaBookmark />
+            {isBookmarked ? <FaBookmarkSolid /> : <FaRegBookmark />}
           </button>
           <button 
             onClick={executeQuery}

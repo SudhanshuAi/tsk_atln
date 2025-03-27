@@ -1,7 +1,12 @@
 import React from 'react';
 import { FaListAlt } from 'react-icons/fa';
+import useStore from '../../store';
 
-const PredefinedQueries = ({ queries, selectedQueryId, handleQuerySelect, darkMode }) => {
+const PredefinedQueries = ({ queries }) => {
+  const selectedQueryId = useStore(state => state.selectedQueryId);
+  const selectQuery = useStore(state => state.selectQuery);
+  const darkMode = useStore(state => state.darkMode);
+
   return (
     <div className="predefined-queries">
       <div className="sidebar-heading-container">
@@ -12,7 +17,7 @@ const PredefinedQueries = ({ queries, selectedQueryId, handleQuerySelect, darkMo
         {queries.map(query => (
           <button
             key={query.id}
-            onClick={() => handleQuerySelect(query.id)}
+            onClick={() => selectQuery(query.id)}
             className={`query-item ${selectedQueryId === query.id ? 'selected' : ''} ${darkMode ? 'dark' : 'light'}`}
           >
             {query.name}

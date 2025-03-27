@@ -1,127 +1,106 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 // React Icons are imported in their respective components
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import QueryEditor from './components/QueryEditor';
 import ResultsViewer from './components/ResultsViewer';
+import Resizer from './components/Resizer';
 import PREDEFINED_QUERIES from './data/queries';
-import DUMMY_RESULTS from './data/dummyResults';
+import useStore from './store';
 import './styles/App.css';
 
 function App() {
-  // State management
-  const [currentQuery, setCurrentQuery] = useState(PREDEFINED_QUERIES[0].query);
-  const [selectedQueryId, setSelectedQueryId] = useState(1);
-  const [queryResults, setQueryResults] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [recentQueries, setRecentQueries] = useState([]);
-  const [bookmarkedQueries, setBookmarkedQueries] = useState([]);
-  const [darkMode, setDarkMode] = useState(false);
-  const [executionTime, setExecutionTime] = useState(null);
-  const [showHistory, setShowHistory] = useState(false);
-
-  // Remove the effect that sets initial results
-  // We want results to appear only after clicking Run Query
-
-  // Handle query selection
-  const handleQuerySelect = (queryId) => {
-    const selectedQuery = PREDEFINED_QUERIES.find(q => q.id === queryId);
-    setSelectedQueryId(queryId);
-    setCurrentQuery(selectedQuery.query);
-    // Clear previous results when selecting a new query
-    setQueryResults(null);
-    setExecutionTime(null);
-  };
-
-  // Execute query
-  const executeQuery = () => {
-    setIsLoading(true);
+  // Get state and actions from the store
+  const darkMode = useStore(state => state.darkMode);
+  const queryEditorHeight = useStore(state => state.queryEditorHeight);
+  const setQueryEditorHeight = useStore(state => state.setQueryEditorHeight);
+  
+  // Refs for resizing
+  const contentRef = useRef(null);
+  const queryEditorRef = useRef(null);
+  const resultsViewerRef = useRef(null);
+  const resizerRef = useRef(null);
+  
+  // Initialize resizer functionality
+  useEffect(() => {
+    const resizer = resizerRef.current;
+    if (!resizer) return;
     
-    // Simulate network delay
-    const startTime = performance.now();
+    let startY;
+    let startHeight;
     
-    setTimeout(() => {
-      setQueryResults(DUMMY_RESULTS[selectedQueryId]);
-      const endTime = performance.now();
-      setExecutionTime((endTime - startTime) / 1000); // Convert to seconds
+    const onMouseDown = (e) => {
+      startY = e.clientY;
+      const queryEditorElement = queryEditorRef.current;
+      startHeight = queryEditorElement.offsetHeight;
       
-      // Add to recent queries
-      if (!recentQueries.includes(currentQuery)) {
-        setRecentQueries(prev => [currentQuery, ...prev.slice(0, 9)]);
-      }
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
       
-      setIsLoading(false);
-    }, 800);
-  };
-
-  // Bookmark a query
-  const bookmarkQuery = () => {
-    if (!bookmarkedQueries.includes(currentQuery)) {
-      setBookmarkedQueries(prev => [...prev, currentQuery]);
-    }
-  };
-
-  // Export results as CSV
-  const exportResults = () => {
-    if (!queryResults) return;
+      // Add styling while dragging
+      document.body.style.cursor = 'ns-resize';
+      document.body.style.userSelect = 'none';
+    };
     
-    // Create CSV content
-    const headers = queryResults.columns.join(',');
-    const rows = queryResults.rows.map(row => 
-      queryResults.columns.map(col => row[col]).join(',')
-    );
-    const csvContent = `data:text/csv;charset=utf-8,${headers}\n${rows.join('\n')}`;
+    const onMouseMove = (e) => {
+      if (!contentRef.current) return;
+      
+      const contentHeight = contentRef.current.offsetHeight;
+      const deltaY = e.clientY - startY;
+      const newHeight = startHeight + deltaY;
+      
+      // Calculate percentage
+      const newPercent = (newHeight / contentHeight) * 100;
+      
+      // Set limits
+      const limitedPercent = Math.max(20, Math.min(80, newPercent));
+      
+      setQueryEditorHeight(limitedPercent);
+    };
     
-    // Create download link
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `query_results_${new Date().toISOString().slice(0, 10)}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  // Toggle dark mode
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-  };
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      
+      // Remove styling
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+    
+    resizer.addEventListener('mousedown', onMouseDown);
+    
+    return () => {
+      resizer.removeEventListener('mousedown', onMouseDown);
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+  }, [setQueryEditorHeight]);
 
   return (
     <div className={`app ${darkMode ? 'dark-mode' : 'light-mode'}`}>
-      <Header 
-        darkMode={darkMode} 
-        toggleDarkMode={toggleDarkMode} 
-      />
+      <Header />
       
       <div className="main-container">
-        <Sidebar 
-          queries={PREDEFINED_QUERIES}
-          selectedQueryId={selectedQueryId}
-          handleQuerySelect={handleQuerySelect}
-          recentQueries={recentQueries}
-          showHistory={showHistory}
-          setShowHistory={setShowHistory}
-          darkMode={darkMode}
-        />
+        <Sidebar queries={PREDEFINED_QUERIES} />
         
-        <main className="content">
-          <QueryEditor 
-            currentQuery={currentQuery}
-            setCurrentQuery={setCurrentQuery}
-            executeQuery={executeQuery}
-            bookmarkQuery={bookmarkQuery}
-            isLoading={isLoading}
-            darkMode={darkMode}
-          />
+        <main className="content" ref={contentRef}>
+          <div 
+            className="query-editor-wrapper" 
+            ref={queryEditorRef}
+            style={{ height: `${queryEditorHeight}%` }}
+          >
+            <QueryEditor />
+          </div>
           
-          <ResultsViewer 
-            queryResults={queryResults}
-            isLoading={isLoading}
-            executionTime={executionTime}
-            exportResults={exportResults}
-            darkMode={darkMode}
-          />
+          <Resizer ref={resizerRef} />
+          
+          <div 
+            className="results-viewer-wrapper"
+            ref={resultsViewerRef}
+            style={{ height: `calc(100% - ${queryEditorHeight}% - 8px)` }}
+          >
+            <ResultsViewer />
+          </div>
         </main>
       </div>
     </div>

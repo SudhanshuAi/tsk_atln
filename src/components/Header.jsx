@@ -1,8 +1,12 @@
 import React from 'react';
 import { FaSun, FaMoon, FaDatabase } from 'react-icons/fa';
+import useStore from '../store';
 import '../styles/Header.css';
 
-const Header = ({ darkMode, toggleDarkMode }) => {
+const Header = () => {
+  const darkMode = useStore(state => state.darkMode);
+  const toggleDarkMode = useStore(state => state.toggleDarkMode);
+
   return (
     <header className={`header ${darkMode ? 'dark' : 'light'}`}>
       <div className="app-title">
