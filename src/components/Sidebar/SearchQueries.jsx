@@ -1,99 +1,39 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import useStore from '../../store';
-import PREDEFINED_QUERIES from '../../data/queries';
+import useDebounce from '../../hooks/useDebounce';
 import '../../styles/SearchQueries.css';
 
 const SearchQueries = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const searchTimeout = useRef(null);
-
+  // Get search-related state and methods from the store
+  const searchTerm = useStore(state => state.searchTerm);
+  const searchResults = useStore(state => state.searchResults);
+  const isSearching = useStore(state => state.isSearching);
+  const setSearchTerm = useStore(state => state.setSearchTerm);
+  const performSearch = useStore(state => state.performSearch);
+  const clearSearch = useStore(state => state.clearSearch);
+  
+  // Get other required store values and methods
   const darkMode = useStore(state => state.darkMode);
   const selectQuery = useStore(state => state.selectQuery);
   const loadQuery = useStore(state => state.loadQuery);
-  const bookmarkedQueries = useStore(state => state.bookmarkedQueries);
-  const recentQueries = useStore(state => state.recentQueries);
   const setSidebarView = useStore(state => state.setSidebarView);
-
-  const handleSearchChange = useCallback((e) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-    
-    if (searchTimeout.current) {
-      clearTimeout(searchTimeout.current);
-    }
-    
-    if (!value.trim()) {
-      setSearchResults([]);
-      setIsSearching(false);
-      return;
-    }
-    
-    setIsSearching(true);
-    searchTimeout.current = setTimeout(() => performSearch(value), 300);
-  }, []);
-
-  const performSearch = useCallback((term) => {
-    const lowercaseTerm = term.toLowerCase();
-    
-    const results = [
-      ...PREDEFINED_QUERIES.filter(query => 
-        query.name.toLowerCase().includes(lowercaseTerm) || 
-        query.query.toLowerCase().includes(lowercaseTerm)
-      ).map(query => ({ 
-        id: query.id, 
-        name: query.name, 
-        type: 'predefined', 
-        query: query.query,
-        isBookmarked: bookmarkedQueries.includes(query.query)
-      })),
-      ...recentQueries.filter(queryText => {
-        const query = PREDEFINED_QUERIES.find(q => q.query === queryText);
-        return query && (
-          query.name.toLowerCase().includes(lowercaseTerm) || 
-          queryText.toLowerCase().includes(lowercaseTerm)
-        );
-      }).map(queryText => {
-        const query = PREDEFINED_QUERIES.find(q => q.query === queryText);
-        return { 
-          id: query?.id, 
-          name: query?.name || 'Custom Query', 
-          type: 'recent', 
-          query: queryText,
-          isBookmarked: bookmarkedQueries.includes(queryText)
-        };
-      }),
-      ...bookmarkedQueries.filter(queryText => {
-        const query = PREDEFINED_QUERIES.find(q => q.query === queryText);
-        return query && (
-          query.name.toLowerCase().includes(lowercaseTerm) || 
-          queryText.toLowerCase().includes(lowercaseTerm)
-        );
-      }).map(queryText => {
-        const query = PREDEFINED_QUERIES.find(q => q.query === queryText);
-        return { 
-          id: query?.id, 
-          name: query?.name || 'Custom Query', 
-          type: 'bookmarked', 
-          query: queryText,
-          isBookmarked: true
-        };
-      })
-    ];
-    
-    setSearchResults(Array.from(new Map(results.map(item => [item.query, item])).values()));
-  }, [bookmarkedQueries, recentQueries]);
-
-  // Re-run search when bookmarked queries change
+  
+  // Use the debounce hook with the search term from the store
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+  
+  // Use the debounced search term to trigger the search
   useEffect(() => {
-    if (searchTerm.trim() && isSearching) {
-      performSearch(searchTerm);
+    if (debouncedSearchTerm.trim()) {
+      performSearch(debouncedSearchTerm);
     }
-  }, [bookmarkedQueries, performSearch, searchTerm, isSearching]);
+  }, [debouncedSearchTerm, performSearch]);
+  
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
 
-  const handleResultClick = useCallback((result) => {
+  const handleResultClick = (result) => {
     // First switch to predefined view
     setSidebarView('predefined');
 
@@ -102,27 +42,13 @@ const SearchQueries = () => {
       if (result.type === 'predefined' && result.id) {
         selectQuery(result.id);
       } else {
-        const predefinedQuery = PREDEFINED_QUERIES.find(q => q.query === result.query);
-        if (predefinedQuery) {
-          selectQuery(predefinedQuery.id);
-        } else {
-          loadQuery(result.query);
-        }
+        loadQuery(result.query);
       }
     }, 50);
     
-    setSearchTerm('');
-    setSearchResults([]);
-    setIsSearching(false);
-  }, [setSidebarView, selectQuery, loadQuery]);
-
-  useEffect(() => {
-    return () => {
-      if (searchTimeout.current) {
-        clearTimeout(searchTimeout.current);
-      }
-    };
-  }, []);
+    // Clear the search
+    clearSearch();
+  };
 
   return (
     <div className={`search-queries ${darkMode ? 'dark' : 'light'}`}>

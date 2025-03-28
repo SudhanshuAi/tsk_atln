@@ -16,8 +16,91 @@ const useStore = create(
       darkMode: false,
       queryEditorHeight: 40,
       sidebarView: 'predefined',
+      searchTerm: '',
+      searchResults: [],
+      isSearching: false,
       
       setCurrentQuery: (query) => set({ currentQuery: query }),
+      
+      // Search-related actions
+      setSearchTerm: (term) => {
+        set({ 
+          searchTerm: term,
+          isSearching: term.trim().length > 0
+        });
+        
+        if (!term.trim()) {
+          set({ searchResults: [] });
+        }
+      },
+      
+      performSearch: (debouncedTerm) => {
+        const { bookmarkedQueries, recentQueries } = get();
+        if (!debouncedTerm.trim()) {
+          set({ searchResults: [], isSearching: false });
+          return;
+        }
+        
+        const lowercaseTerm = debouncedTerm.toLowerCase();
+        
+        const results = [
+          ...PREDEFINED_QUERIES.filter(query => 
+            query.name.toLowerCase().includes(lowercaseTerm) || 
+            query.query.toLowerCase().includes(lowercaseTerm)
+          ).map(query => ({ 
+            id: query.id, 
+            name: query.name, 
+            type: 'predefined', 
+            query: query.query,
+            isBookmarked: bookmarkedQueries.includes(query.query)
+          })),
+          ...recentQueries.filter(queryText => {
+            const query = PREDEFINED_QUERIES.find(q => q.query === queryText);
+            return query && (
+              query.name.toLowerCase().includes(lowercaseTerm) || 
+              queryText.toLowerCase().includes(lowercaseTerm)
+            );
+          }).map(queryText => {
+            const query = PREDEFINED_QUERIES.find(q => q.query === queryText);
+            return { 
+              id: query?.id, 
+              name: query?.name || 'Custom Query', 
+              type: 'recent', 
+              query: queryText,
+              isBookmarked: bookmarkedQueries.includes(queryText)
+            };
+          }),
+          ...bookmarkedQueries.filter(queryText => {
+            const query = PREDEFINED_QUERIES.find(q => q.query === queryText);
+            return query && (
+              query.name.toLowerCase().includes(lowercaseTerm) || 
+              queryText.toLowerCase().includes(lowercaseTerm)
+            );
+          }).map(queryText => {
+            const query = PREDEFINED_QUERIES.find(q => q.query === queryText);
+            return { 
+              id: query?.id, 
+              name: query?.name || 'Custom Query', 
+              type: 'bookmarked', 
+              query: queryText,
+              isBookmarked: true
+            };
+          })
+        ];
+        
+        set({ 
+          searchResults: Array.from(new Map(results.map(item => [item.query, item])).values()),
+          isSearching: true
+        });
+      },
+      
+      clearSearch: () => {
+        set({ 
+          searchTerm: '',
+          searchResults: [],
+          isSearching: false
+        });
+      },
       
       selectQuery: (queryId) => {
         const selectedQuery = PREDEFINED_QUERIES.find(q => q.id === queryId);
