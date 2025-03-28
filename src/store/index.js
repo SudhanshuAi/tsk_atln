@@ -35,61 +35,31 @@ const useStore = create(
       },
       
       performSearch: (debouncedTerm) => {
-        const { bookmarkedQueries, recentQueries } = get();
         if (!debouncedTerm.trim()) {
           set({ searchResults: [], isSearching: false });
           return;
         }
         
+        const { bookmarkedQueries, recentQueries } = get();
         const lowercaseTerm = debouncedTerm.toLowerCase();
         
-        const results = [
-          ...PREDEFINED_QUERIES.filter(query => 
+        // Optimized approach: search only in predefined queries
+        const results = PREDEFINED_QUERIES
+          .filter(query => 
             query.name.toLowerCase().includes(lowercaseTerm) || 
             query.query.toLowerCase().includes(lowercaseTerm)
-          ).map(query => ({ 
-            id: query.id, 
-            name: query.name, 
-            type: 'predefined', 
+          )
+          .map(query => ({
+            id: query.id,
+            name: query.name,
+            type: 'predefined',
             query: query.query,
-            isBookmarked: bookmarkedQueries.includes(query.query)
-          })),
-          ...recentQueries.filter(queryText => {
-            const query = PREDEFINED_QUERIES.find(q => q.query === queryText);
-            return query && (
-              query.name.toLowerCase().includes(lowercaseTerm) || 
-              queryText.toLowerCase().includes(lowercaseTerm)
-            );
-          }).map(queryText => {
-            const query = PREDEFINED_QUERIES.find(q => q.query === queryText);
-            return { 
-              id: query?.id, 
-              name: query?.name || 'Custom Query', 
-              type: 'recent', 
-              query: queryText,
-              isBookmarked: bookmarkedQueries.includes(queryText)
-            };
-          }),
-          ...bookmarkedQueries.filter(queryText => {
-            const query = PREDEFINED_QUERIES.find(q => q.query === queryText);
-            return query && (
-              query.name.toLowerCase().includes(lowercaseTerm) || 
-              queryText.toLowerCase().includes(lowercaseTerm)
-            );
-          }).map(queryText => {
-            const query = PREDEFINED_QUERIES.find(q => q.query === queryText);
-            return { 
-              id: query?.id, 
-              name: query?.name || 'Custom Query', 
-              type: 'bookmarked', 
-              query: queryText,
-              isBookmarked: true
-            };
-          })
-        ];
+            isBookmarked: bookmarkedQueries.includes(query.query),
+            isRecent: recentQueries.includes(query.query)
+          }));
         
         set({ 
-          searchResults: Array.from(new Map(results.map(item => [item.query, item])).values()),
+          searchResults: results,
           isSearching: true
         });
       },
@@ -134,7 +104,7 @@ const useStore = create(
       },
       
       bookmarkQuery: () => {
-        const { currentQuery, bookmarkedQueries } = get();
+        const { currentQuery, bookmarkedQueries, searchTerm, isSearching } = get();
         const isBookmarked = bookmarkedQueries.includes(currentQuery);
         
         if (isBookmarked) {
@@ -142,21 +112,36 @@ const useStore = create(
           set({ 
             bookmarkedQueries: bookmarkedQueries.filter(q => q !== currentQuery)
           });
+          
+          // Update search results if there's an active search
+          if (searchTerm.trim() && isSearching) {
+            get().performSearch(searchTerm);
+          }
         } else {
           // When bookmarking, update bookmarks and switch to bookmarked view
           set({ 
             bookmarkedQueries: [...bookmarkedQueries, currentQuery],
             sidebarView: 'bookmarked'
           });
+          
+          // Update search results if there's an active search
+          if (searchTerm.trim() && isSearching) {
+            get().performSearch(searchTerm);
+          }
         }
       },
       
       removeBookmark: (query) => {
-        const { bookmarkedQueries } = get();
+        const { bookmarkedQueries, searchTerm, isSearching } = get();
         const updatedBookmarks = bookmarkedQueries.filter(q => q !== query);
         
         // Only update bookmarks array, don't change the sidebar view
         set({ bookmarkedQueries: [...updatedBookmarks] });
+        
+        // Update search results if there's an active search
+        if (searchTerm.trim() && isSearching) {
+          get().performSearch(searchTerm);
+        }
       },
       
       loadQuery: (query) => {

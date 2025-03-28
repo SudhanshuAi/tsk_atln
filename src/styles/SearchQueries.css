@@ -118,41 +118,24 @@
 }
 
 .search-result-badge {
-  font-size: 0.7rem;
+  font-size: 0.5rem;
   padding: 2px 6px;
   border-radius: 12px;
-  margin-left: 8px;
-  text-transform: capitalize;
+  text-transform: uppercase;
 }
 
-.search-result-badge.light.predefined {
-  background-color: #e0e7ff;
-  color: #4f46e5;
+.search-result-badge.bookmarked {
+  background-color: #4a6da7;
+  color: white;
+}
+
+.search-result-badge.dark {
+  opacity: 0.9;
 }
 
 .search-result-badge.light.bookmarked {
-  background-color: #fef3c7;
-  color: #d97706;
-}
-
-.search-result-badge.light.recent {
-  background-color: #dcfce7;
-  color: #16a34a;
-}
-
-.search-result-badge.dark.predefined {
-  background-color: #4338ca;
-  color: white;
-}
-
-.search-result-badge.dark.bookmarked {
-  background-color: #b45309;
-  color: white;
-}
-
-.search-result-badge.dark.recent {
-  background-color: #166534;
-  color: white;
+  background-color: #d0e0ff;
+  color: #2c4a7c;
 }
 
 .no-search-results {
@@ -160,4 +143,4 @@
   text-align: center;
   font-style: italic;
   color: #9ca3af;
-} 
+}
