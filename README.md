@@ -21,6 +21,7 @@ SQL Query Runner is a React-based web application that allows users to write SQL
 
 - **React**: JavaScript framework for building the user interface
 - **React Icons**: Icon library for UI elements
+- **Zustand**: Global State Management Library
 - **CSS**: Custom styling without Tailwind (as per requirements)
 - **Vite**: Fast build tool for development
 
@@ -53,32 +54,3 @@ SQL Query Runner is a React-based web application that allows users to write SQL
   - Efficient state management to minimize re-renders
   - Lazy loading of results to handle potentially large datasets
   - CSS optimizations to reduce paint and layout operations
-
-## Project Structure
-
-```
-src/
-├── App.jsx              # Main application component
-├── components/          # UI components
-│   ├── Header.jsx       # Application header with theme toggle
-│   ├── Sidebar.jsx      # Side navigation with query selection
-│   │   ├── PredefinedQueries.jsx  # Predefined query list
-│   │   └── RecentQueries.jsx      # Recent queries history
-│   ├── QueryEditor.jsx  # SQL query editor component
-│   ├── ResultsViewer.jsx # Results display component
-│   └── NoResults.jsx    # Empty state component
-├── data/                # Static data
-│   ├── queries.js       # Predefined SQL queries
-│   └── dummyResults.js  # Sample result datasets
-├── styles/              # CSS styles
-│   ├── App.css          # Global styles
-│   ├── Header.css       # Header component styles
-│   ├── Sidebar.css      # Sidebar component styles
-│   ├── QueryEditor.css  # Editor component styles
-│   └── ResultsViewer.css # Results component styles
-└── main.jsx            # Entry point
-```
-
-## License
-
-This project is open source and available under the [MIT License](LICENSE).
