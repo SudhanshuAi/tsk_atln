@@ -22,7 +22,7 @@ SQL Query Runner is a React-based web application that allows users to write SQL
 - **React**: JavaScript framework for building the user interface
 - **React Icons**: Icon library for UI elements
 - **Zustand**: Global State Management Library
-- **CSS**: Custom styling without Tailwind (as per requirements)
+- **CSS**: Custom styling
 - **Vite**: Fast build tool for development
 
 ## Setup Instructions
