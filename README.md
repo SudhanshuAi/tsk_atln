@@ -63,7 +63,7 @@ SQL Query Runner is a React-based web application that allows users to write SQL
 
 
 - **Execution Time**: The application's load time is optimized to be under 0.5 seconds
-- **Measurement**:
+- **Measurements**:
    - Performance metrics were measured using Chrome DevTools (Lighthouse)
    - The result table's loading time was measured using the Performance API, which ranged between 0.8 and 0.81 seconds
 - **Optimizations**:
