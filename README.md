@@ -21,7 +21,7 @@ SQL Query Runner is a React-based web application that allows users to write SQL
 
 ### Core Framework
 
--   **React 18**: Used for the UI component architecture
+-   **React**: Used for the UI component architecture
 -   **Zustand**: Lightweight state management with persistence
 -   **React Router**: For navigation (though currently a single-page application)
 
@@ -59,7 +59,7 @@ SQL Query Runner is a React-based web application that allows users to write SQL
 
 ## Performance Optimization
 
-<img width="940" alt="{D887BF78-074E-45A8-A9A4-2884768F0996}" src="https://github.com/user-attachments/assets/ed4a1606-064c-4259-8ba4-538d50bc3d0f" />
+<img width="900" alt="{D887BF78-074E-45A8-A9A4-2884768F0996}" src="https://github.com/user-attachments/assets/ed4a1606-064c-4259-8ba4-538d50bc3d0f" />
 
 
 - **Execution Time**: The application's load time is optimized to be under 0.5 seconds
