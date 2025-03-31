@@ -1,6 +1,6 @@
 # SQL Query Runner
 
-A frontend application for running SQL queries and visualizing results, developed for the Atlan Frontend Internship Task 2025.
+A frontend application for running SQL queries and visualizing results, developed for the Frontend Task 2025.
 
 ## Overview
 
