@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import useStore from '../store';
+import useStore from '../store/store';
 import '../styles/Resizer.css';
 
 const Resizer = forwardRef((props, ref) => {

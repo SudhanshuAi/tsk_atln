@@ -3,7 +3,7 @@ import { FaPlay } from 'react-icons/fa';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import '../styles/Skeleton.css';
-import useStore from '../store';
+import useStore from '../store/store';
 
 const TableSkeleton = () => {
   const darkMode = useStore(state => state.darkMode);

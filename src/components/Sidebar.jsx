@@ -3,7 +3,7 @@ import PredefinedQueries from './Sidebar/PredefinedQueries';
 import RecentQueries from './Sidebar/RecentQueries';
 import BookmarkedQueries from './Sidebar/BookmarkedQueries';
 import SearchQueries from './Sidebar/SearchQueries';
-import useStore from '../store';
+import useStore from '../store/store';
 import { FaListAlt, FaBookmark, FaHistory, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import '../styles/Sidebar.css';
 
@@ -44,10 +44,7 @@ const Sidebar = ({ queries }) => {
       </div>
       
       <div className="sidebar-content">
-        <div className={sidebarView !== 'predefined' ? 'hidden' : ''}>
-          <PredefinedQueries queries={queries} />
-        </div>
-        
+        {sidebarView === 'predefined' && <PredefinedQueries queries={queries} />}
         {sidebarView === 'bookmarked' && <BookmarkedQueries />}
         {sidebarView === 'recent' && <RecentQueries />}
       </div>
@@ -57,7 +54,7 @@ const Sidebar = ({ queries }) => {
       </div>
 
       <button 
-        className={`sidebar-toggle ${darkMode ? 'dark' : 'light'}`}
+        className="sidebar-toggle"
         onClick={toggleSidebar}
         title={isOpen ? "Close Sidebar" : "Open Sidebar"}
       >

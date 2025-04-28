@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaPlay, FaBookmark as FaBookmarkSolid, FaRegBookmark, FaSpinner, FaCode } from 'react-icons/fa';
-import useStore from '../store';
+import useStore from '../store/store';
 import '../styles/QueryEditor.css';
 
 const QueryEditor = () => {
@@ -48,7 +48,7 @@ const QueryEditor = () => {
         </div>
       </div>
       
-      <div className={`editor-container ${darkMode ? 'dark' : 'light'}`}>
+      <div className={"editor-container"}>
         <textarea
           value={currentQuery}
           onChange={(e) => setCurrentQuery(e.target.value)}

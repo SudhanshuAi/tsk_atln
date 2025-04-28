@@ -4,6 +4,7 @@
   padding: 16px;
 }
 
+/* Header (if any future changes needed) */
 .recent-header {
   display: flex;
   justify-content: space-between;
@@ -12,10 +13,12 @@
   cursor: pointer;
 }
 
+/* History list */
 .history-list {
   margin-top: 8px;
 }
 
+/* Individual history item */
 .history-item {
   position: relative;
   padding: 8px;
@@ -27,32 +30,54 @@
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
-  background-color: #f3f4f6;
+  transition: background-color 0.2s, opacity 0.2s;
 }
 
+/* Default light mode */
+.history-list.light .history-item {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+/* Default dark mode */
+.history-list.dark .history-item {
+  background-color: #374151;
+  color: #e5e7eb;
+}
+
+/* Hover effect */
 .history-item:hover {
   opacity: 0.8;
 }
 
-.history-item.dark {
-  background-color: #374151;
-}
-
-/* Selected item indicators */
+/* Selected item styles */
 .history-item.is-selected {
   position: relative;
   border-left: none;
   padding-left: 8px; /* Reset to normal padding */
-  background-color: #dbeafe;
 }
 
-.history-item.is-selected.light {
-  border-left-color: transparent;
+/* Selected - light mode */
+.history-list.light .history-item.is-selected {
   background-color: #dbeafe;
+  color: #1e3a8a;
 }
 
-.history-item.is-selected.dark {
-  border-left-color: transparent;
+/* Selected - dark mode */
+.history-list.dark .history-item.is-selected {
   background-color: #3b82f6;
   color: white;
-} 
+}
+
+/* Empty state */
+.empty-history {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* Empty state dark */
+.history-list.dark .empty-history {
+  color: #6b7280;
+}

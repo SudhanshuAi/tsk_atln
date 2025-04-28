@@ -6,22 +6,23 @@ import QueryEditor from './components/QueryEditor';
 import ResultsViewer from './components/ResultsViewer';
 import Resizer from './components/Resizer';
 import PREDEFINED_QUERIES from './data/queries';
-import useStore from './store';
+import useStore from './store/store';
 import './styles/App.css';
 
 function App() {
-  // Get state and actions from the store
   const darkMode = useStore(state => state.darkMode);
   const queryEditorHeight = useStore(state => state.queryEditorHeight);
   const setQueryEditorHeight = useStore(state => state.setQueryEditorHeight);
   
-  // Refs for resizing
   const contentRef = useRef(null);
   const queryEditorRef = useRef(null);
   const resultsViewerRef = useRef(null);
   const resizerRef = useRef(null);
   
-  // Initialize resizer functionality
+  useEffect(() => {
+    setQueryEditorHeight(50);
+  }, []);
+  
   useEffect(() => {
     const resizer = resizerRef.current;
     if (!resizer) return;
@@ -37,7 +38,6 @@ function App() {
       document.addEventListener('mousemove', onMouseMove);
       document.addEventListener('mouseup', onMouseUp);
       
-      // Add styling while dragging
       document.body.style.cursor = 'ns-resize';
       document.body.style.userSelect = 'none';
     };
@@ -49,10 +49,8 @@ function App() {
       const deltaY = e.clientY - startY;
       const newHeight = startHeight + deltaY;
       
-      // Calculate percentage
       const newPercent = (newHeight / contentHeight) * 100;
       
-      // Set limits
       const limitedPercent = Math.max(20, Math.min(80, newPercent));
       
       setQueryEditorHeight(limitedPercent);
@@ -62,7 +60,6 @@ function App() {
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
       
-      // Remove styling
       document.body.style.cursor = '';
       document.body.style.userSelect = '';
     };

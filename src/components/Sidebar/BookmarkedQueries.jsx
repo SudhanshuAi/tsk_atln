@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { FaTimes } from 'react-icons/fa';
-import useStore from '../../store';
+import useStore from '../../store/store';
 import PREDEFINED_QUERIES from '../../data/queries';
 import '../../styles/BookmarkedQueries.css';
 
@@ -19,8 +19,7 @@ const BookmarkedQueries = () => {
   const isSelectedQuery = useCallback((query) => 
     query === currentQuery, [currentQuery]);
 
-  const handleRemoveBookmark = useCallback((query, e) => {
-    e.stopPropagation(); // Prevent triggering loadQuery
+  const handleRemoveBookmark = useCallback((query) => {
     removeBookmark(query);
   }, [removeBookmark]);
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import useStore from '../../store';
+import useStore from '../../store/store';
 import '../../styles/PredefinedQueries.css';
 
 const PredefinedQueries = ({ queries }) => {
@@ -8,7 +8,6 @@ const PredefinedQueries = ({ queries }) => {
   const darkMode = useStore(state => state.darkMode);
   const selectedQueryRef = useRef(null);
 
-  // Auto-scroll to selected query
   useEffect(() => {
     if (selectedQueryId && selectedQueryRef.current) {
       selectedQueryRef.current.scrollIntoView({

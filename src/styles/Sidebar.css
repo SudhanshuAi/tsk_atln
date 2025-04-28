@@ -1,17 +1,13 @@
-/* Sidebar.css - Styles for the sidebar component */
+/* Sidebar.css - Refactored to make dark/light depend only on parent */
 
 .sidebar {
   width: 250px;
   display: flex;
   flex-direction: column;
-  overflow: visible; /* Changed from hidden to visible to show the toggle button */
+  overflow: visible;
   position: relative;
   transition: width 0.3s ease;
-  height: 100%; /* Ensure full height */
-}
-
-.sidebar.closed {
-  width: 0;
+  height: 100%;
 }
 
 .sidebar.light {
@@ -22,6 +18,10 @@
 .sidebar.dark {
   background-color: #2d3748;
   border-right: 1px solid #1a202c;
+}
+
+.sidebar.closed {
+  width: 0;
 }
 
 /* Toggle button */
@@ -39,31 +39,31 @@
   cursor: pointer;
   border-radius: 0 4px 4px 0;
   transition: background-color 0.2s ease;
-  z-index: 1000; /* Ensure button stays above other elements */
+  z-index: 1000;
+  border-left: none;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
 }
 
-.sidebar-toggle.light {
+/* Toggle button style based on parent */
+.sidebar.light .sidebar-toggle {
   background-color: rgb(240, 246, 253);
   color: #64748b;
   border: 1px solid #e5e7eb;
-  border-left: none;
-  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05); /* Added shadow for better visibility */
 }
 
-.sidebar-toggle.dark {
-  background-color: #2d3748;
-  color: #94a3b8;
-  border: 1px solid #1a202c;
-  border-left: none;
-  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.2); /* Added shadow for better visibility */
-}
-
-.sidebar-toggle.light:hover {
+.sidebar.light .sidebar-toggle:hover {
   background-color: #f1f5f9;
   color: #334155;
 }
 
-.sidebar-toggle.dark:hover {
+.sidebar.dark .sidebar-toggle {
+  background-color: #2d3748;
+  color: #94a3b8;
+  border: 1px solid #1a202c;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar.dark .sidebar-toggle:hover {
   background-color: #475569;
   color: #e2e8f0;
 }
@@ -99,6 +99,7 @@
   transition: all 0.2s ease;
 }
 
+/* Tab icon colors */
 .sidebar.light .sidebar-tab {
   color: #64748b;
 }
@@ -131,9 +132,13 @@
 .sidebar-content {
   flex: 1;
   overflow-y: auto;
-  scrollbar-width: none; /* For Firefox */
+  scrollbar-width: none;
   opacity: 1;
   transition: opacity 0.2s ease;
+}
+
+.sidebar-content::-webkit-scrollbar {
+  display: none;
 }
 
 .sidebar.closed .sidebar-content,
@@ -143,16 +148,7 @@
   pointer-events: none;
 }
 
-.sidebar-content::-webkit-scrollbar {
-  display: none; /* For Chrome, Safari, and Opera */
-}
-
-/* Utility class for hidden components */
-.hidden {
-  display: none;
-}
-
-/* Sidebar footer */
+/* Footer */
 .sidebar-footer {
   border-top: 1px solid;
   padding: 12px;
@@ -168,21 +164,26 @@
   background-color: #1e293b;
 }
 
-/* Common sidebar elements */
+/* Utility */
+.hidden {
+  display: none;
+}
+
+/* Other components inside sidebar */
 .sidebar-heading-container {
   display: flex;
   justify-content: center;
   align-items: center;
   margin-bottom: 12px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid;
 }
 
-.sidebar-icon {
-  font-size: 0.9rem;
+.sidebar.light .sidebar-heading-container {
+  border-color: #e5e7eb;
 }
 
-.sidebar-up {
-  margin-bottom: 6px;
+.sidebar.dark .sidebar-heading-container {
+  border-color: #1a202c;
 }
 
 .sidebar-heading {

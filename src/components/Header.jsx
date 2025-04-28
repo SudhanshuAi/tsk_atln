@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaSun, FaMoon, FaDatabase } from 'react-icons/fa';
-import useStore from '../store';
+import useStore from '../store/store';
 import '../styles/Header.css';
 
 const Header = () => {

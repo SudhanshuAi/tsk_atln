@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaTable, FaDownload, FaClock } from 'react-icons/fa';
 import TableSkeleton from './Skeleton';
-import useStore from '../store';
+import useStore from '../store/store';
 import '../styles/ResultsViewer.css';
 
 const ResultsViewer = () => {
@@ -10,6 +10,22 @@ const ResultsViewer = () => {
   const executionTime = useStore(state => state.executionTime);
   const exportResults = useStore(state => state.exportResults);
   const darkMode = useStore(state => state.darkMode);
+
+  const [selectedField, setSelectedField] = useState('');
+
+  const handleFieldChange = (e) => {
+    setSelectedField(e.target.value);
+  };
+
+  const filteredRows = queryResults 
+  ? queryResults.rows.filter((row) =>
+    queryResults.columns.some((column) =>
+      row[column] ?
+      row[column].toString().toLowerCase().includes(selectedField.toLowerCase()) : false
+    )
+  )
+  : [];
+
 
   return (
     <div className={`results-viewer ${darkMode ? 'dark' : 'light'}`}>
@@ -32,6 +48,15 @@ const ResultsViewer = () => {
           >
             <FaDownload /> Export CSV
           </button>
+
+          <div className="search-control">
+          <input
+            type='text'
+            placeholder='search all fileds'
+            value={selectedField}
+            onChange={handleFieldChange}
+          />
+          </div>
         </div>
       </div>
 
@@ -55,17 +80,26 @@ const ResultsViewer = () => {
                 </tr>
               </thead>
               <tbody>
-                {queryResults.rows.map((row, rowIndex) => (
-                  <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'even-row' : 'odd-row'}>
-                    {queryResults.columns.map((column, colIndex) => (
-                      <td key={colIndex}>
-                        {typeof row[column] === 'number' 
-                          ? row[column].toLocaleString() 
-                          : row[column]}
-                      </td>
-                    ))}
+                {filteredRows.length>0 ?(
+                  filteredRows.map((row, rowIndex) => (
+                    <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'even-row' : 'odd-row'}>
+                      {queryResults.columns.map((column, colIndex)=> (
+                        <td key={colIndex}>
+                          {typeof row[column] === 'number'
+                            ? row[column].toLocaleString()
+                            : row[column]
+                          }
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={queryResults.columns.length} className='no-results'>
+                      No results found
+                    </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>

@@ -14,7 +14,7 @@ const useStore = create(
       recentQueries: [],
       bookmarkedQueries: [],
       darkMode: false,
-      queryEditorHeight: 40,
+      queryEditorHeight: 50,
       sidebarView: 'predefined',
       searchTerm: '',
       searchResults: [],
@@ -22,7 +22,6 @@ const useStore = create(
       
       setCurrentQuery: (query) => set({ currentQuery: query }),
       
-      // Search-related actions
       setSearchTerm: (term) => {
         set({ 
           searchTerm: term,
@@ -40,22 +39,20 @@ const useStore = create(
           return;
         }
         
-        const { bookmarkedQueries, recentQueries } = get();
+        const { bookmarkedQueries} = get();
         const lowercaseTerm = debouncedTerm.toLowerCase();
-        
-        // Optimized approach: search only in predefined queries
+
         const results = PREDEFINED_QUERIES
-          .filter(query => 
-            query.name.toLowerCase().includes(lowercaseTerm) || 
-            query.query.toLowerCase().includes(lowercaseTerm)
-          )
+        .filter(query => 
+          query.name.toLowerCase().startsWith(lowercaseTerm) || 
+          query.query.toLowerCase().startsWith(lowercaseTerm)
+        )
           .map(query => ({
             id: query.id,
             name: query.name,
             type: 'predefined',
             query: query.query,
             isBookmarked: bookmarkedQueries.includes(query.query),
-            isRecent: recentQueries.includes(query.query)
           }));
         
         set({ 
@@ -108,23 +105,19 @@ const useStore = create(
         const isBookmarked = bookmarkedQueries.includes(currentQuery);
         
         if (isBookmarked) {
-          // When unbookmarking, just update the bookmarks array
           set({ 
             bookmarkedQueries: bookmarkedQueries.filter(q => q !== currentQuery)
           });
           
-          // Update search results if there's an active search
           if (searchTerm.trim() && isSearching) {
             get().performSearch(searchTerm);
           }
         } else {
-          // When bookmarking, update bookmarks and switch to bookmarked view
           set({ 
             bookmarkedQueries: [...bookmarkedQueries, currentQuery],
             sidebarView: 'bookmarked'
           });
           
-          // Update search results if there's an active search
           if (searchTerm.trim() && isSearching) {
             get().performSearch(searchTerm);
           }
@@ -135,10 +128,8 @@ const useStore = create(
         const { bookmarkedQueries, searchTerm, isSearching } = get();
         const updatedBookmarks = bookmarkedQueries.filter(q => q !== query);
         
-        // Only update bookmarks array, don't change the sidebar view
         set({ bookmarkedQueries: [...updatedBookmarks] });
         
-        // Update search results if there's an active search
         if (searchTerm.trim() && isSearching) {
           get().performSearch(searchTerm);
         }
@@ -173,6 +164,7 @@ const useStore = create(
       setQueryEditorHeight: (height) => set({ queryEditorHeight: height }),
       setSidebarView: (view) => set({ sidebarView: view })
     }),
+    
     {
       name: 'sql-editor-storage',
       partialize: (state) => ({

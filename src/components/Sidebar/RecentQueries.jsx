@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import useStore from '../../store';
+import useStore from '../../store/store';
 import PREDEFINED_QUERIES from '../../data/queries';
 import '../../styles/RecentQueries.css';
 
@@ -30,7 +30,7 @@ const RecentQueries = () => {
           recentQueries.map((query, index) => (
             <div 
               key={index} 
-              className={`history-item ${isSelectedQuery(query) ? 'is-selected' : ''} ${darkMode ? 'dark' : 'light'}`}
+              className={`history-item ${isSelectedQuery(query) ? 'is-selected' : ''}`}
               onClick={() => handleLoadQuery(query)}
               title={isSelectedQuery(query) ? "Currently selected query" : "Load this query"}
             >
