@@ -18,6 +18,10 @@ function App() {
   const queryEditorRef = useRef(null);
   const resultsViewerRef = useRef(null);
   const resizerRef = useRef(null);
+
+  useEffect(() => {
+    setQueryEditorHeight(50);
+  }, []);
   
   useEffect(() => {
     setQueryEditorHeight(50);
