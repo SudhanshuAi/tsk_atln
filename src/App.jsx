@@ -21,7 +21,7 @@ function App() {
 
   useEffect(() => {
   setQueryEditorHeight(50);
-}, []);
+}, [50]);
   
   useEffect(() => {
     const resizer = resizerRef.current;
