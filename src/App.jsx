@@ -1,71 +1,67 @@
 import React, { useRef, useEffect } from 'react';
-// React Icons are imported in their respective components
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import QueryEditor from './components/QueryEditor';
 import ResultsViewer from './components/ResultsViewer';
 import Resizer from './components/Resizer';
+import ConnectionManager from './components/ConnectionManager';
 import PREDEFINED_QUERIES from './data/queries';
 import useStore from './store/store';
 import './styles/App.css';
 
 function App() {
-  const darkMode = useStore(state => state.darkMode);
-  const queryEditorHeight = useStore(state => state.queryEditorHeight);
-  const setQueryEditorHeight = useStore(state => state.setQueryEditorHeight);
-  
+  const darkMode = useStore(s => s.darkMode);
+  const queryEditorHeight = useStore(s => s.queryEditorHeight);
+  const setQueryEditorHeight = useStore(s => s.setQueryEditorHeight);
+  const initDb = useStore(s => s.initDb);
+  const dbReady = useStore(s => s.dbReady);
+  const dbError = useStore(s => s.dbError);
+
   const contentRef = useRef(null);
   const queryEditorRef = useRef(null);
-  const resultsViewerRef = useRef(null);
   const resizerRef = useRef(null);
 
+  // Initialize the sql.js database on mount
   useEffect(() => {
-  setQueryEditorHeight(50);
-}, [setQueryEditorHeight]);
-  
+    initDb();
+  }, [initDb]);
+
+  useEffect(() => {
+    setQueryEditorHeight(50);
+  }, [setQueryEditorHeight]);
+
+  // Drag-to-resize logic
   useEffect(() => {
     const resizer = resizerRef.current;
     if (!resizer) return;
-    
-    let startY;
-    let startHeight;
-    
+
+    let startY, startHeight;
+
     const onMouseDown = (e) => {
       startY = e.clientY;
-      const queryEditorElement = queryEditorRef.current;
-      startHeight = queryEditorElement.offsetHeight;
-      
+      startHeight = queryEditorRef.current.offsetHeight;
       document.addEventListener('mousemove', onMouseMove);
       document.addEventListener('mouseup', onMouseUp);
-      
       document.body.style.cursor = 'ns-resize';
       document.body.style.userSelect = 'none';
     };
-    
+
     const onMouseMove = (e) => {
       if (!contentRef.current) return;
-      
       const contentHeight = contentRef.current.offsetHeight;
       const deltaY = e.clientY - startY;
-      const newHeight = startHeight + deltaY;
-      
-      const newPercent = (newHeight / contentHeight) * 100;
-      
-      const limitedPercent = Math.max(20, Math.min(80, newPercent));
-      
-      setQueryEditorHeight(limitedPercent);
+      const newPercent = ((startHeight + deltaY) / contentHeight) * 100;
+      setQueryEditorHeight(Math.max(20, Math.min(80, newPercent)));
     };
-    
+
     const onMouseUp = () => {
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
-      
       document.body.style.cursor = '';
       document.body.style.userSelect = '';
     };
-    
+
     resizer.addEventListener('mousedown', onMouseDown);
-    
     return () => {
       resizer.removeEventListener('mousedown', onMouseDown);
       document.removeEventListener('mousemove', onMouseMove);
@@ -73,33 +69,70 @@ function App() {
     };
   }, [setQueryEditorHeight]);
 
+  // ── Loading splash ────────────────────────────────────────────────────
+  if (!dbReady && !dbError) {
+    return (
+      <div className={`app-loading ${darkMode ? 'dark-mode' : 'light-mode'}`}>
+        <div className="loading-splash">
+          <div className="splash-icon">
+            <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+              <ellipse cx="28" cy="14" rx="22" ry="8" stroke="currentColor" strokeWidth="2.5" />
+              <path d="M6 14v28c0 4.4 9.9 8 22 8s22-3.6 22-8V14" stroke="currentColor" strokeWidth="2.5" />
+              <path d="M6 28c0 4.4 9.9 8 22 8s22-3.6 22-8" stroke="currentColor" strokeWidth="2.5" />
+            </svg>
+          </div>
+          <h2>Initializing SQL Engine</h2>
+          <p>Loading WebAssembly runtime and seeding database…</p>
+          <div className="splash-bar">
+            <div className="splash-bar-fill" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Fatal error ───────────────────────────────────────────────────────
+  if (dbError) {
+    return (
+      <div className={`app-loading ${darkMode ? 'dark-mode' : 'light-mode'}`}>
+        <div className="loading-splash error">
+          <h2>⚠️ Failed to Initialize</h2>
+          <p>{dbError}</p>
+          <button onClick={() => window.location.reload()}>Retry</button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`app ${darkMode ? 'dark-mode' : 'light-mode'}`}>
       <Header />
-      
+
       <div className="main-container">
         <Sidebar queries={PREDEFINED_QUERIES} />
-        
+
         <main className="content" ref={contentRef}>
-          <div 
-            className="query-editor-wrapper" 
+          <div
+            className="query-editor-wrapper"
             ref={queryEditorRef}
             style={{ height: `${queryEditorHeight}%` }}
           >
             <QueryEditor />
           </div>
-          
+
           <Resizer ref={resizerRef} />
-          
-          <div 
+
+          <div
             className="results-viewer-wrapper"
-            ref={resultsViewerRef}
             style={{ height: `calc(100% - ${queryEditorHeight}% - 8px)` }}
           >
             <ResultsViewer />
           </div>
         </main>
       </div>
+
+      {/* Global overlays */}
+      <ConnectionManager />
     </div>
   );
 }

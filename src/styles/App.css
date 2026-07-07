@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 /* App.css - Main styles for the application */
 
 * {
@@ -7,7 +9,7 @@
   }
   
   body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
     font-size: 14px;
     line-height: 1.5;
   }
@@ -81,3 +83,86 @@
   .dark-mode ::-webkit-scrollbar-thumb:hover {
     background: #777;
   }
+
+/* ── Loading / Error Splash ─────────────────────────────────────────────── */
+.app-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
+}
+
+.app-loading.dark-mode  { background: #0d1117; color: #e6edf3; }
+.app-loading.light-mode { background: #f0f4f8; color: #1c2128; }
+
+.loading-splash {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  padding: 48px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+  max-width: 420px;
+}
+
+.loading-splash.error { border-color: rgba(224,108,117,0.3); }
+
+.splash-icon {
+  color: #61afef;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1;   transform: scale(1);    }
+  50%       { opacity: 0.6; transform: scale(0.95); }
+}
+
+.loading-splash h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
+}
+.loading-splash p {
+  font-size: 0.9rem;
+  opacity: 0.6;
+  margin: 0;
+}
+
+.splash-bar {
+  width: 240px;
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.1);
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.splash-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #61afef, #c678dd);
+  border-radius: 4px;
+  animation: barSlide 1.6s ease-in-out infinite;
+}
+
+@keyframes barSlide {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+
+.loading-splash.error button {
+  margin-top: 8px;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  background: #61afef;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.loading-splash.error button:hover { background: #528bcc; }

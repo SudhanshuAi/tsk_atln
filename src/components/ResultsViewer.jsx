@@ -1,108 +1,173 @@
 import React, { useState } from 'react';
-import { FaTable, FaDownload, FaClock } from 'react-icons/fa';
+import { FaTable, FaDownload, FaClock, FaExclamationTriangle, FaCheckCircle, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import TableSkeleton from './Skeleton';
 import useStore from '../store/store';
 import '../styles/ResultsViewer.css';
 
+const PAGE_SIZE = 100;
+
 const ResultsViewer = () => {
-  const queryResults = useStore(state => state.queryResults);
-  const isLoading = useStore(state => state.isLoading);
-  const executionTime = useStore(state => state.executionTime);
-  const exportResults = useStore(state => state.exportResults);
-  const darkMode = useStore(state => state.darkMode);
+  const queryResults = useStore(s => s.queryResults);
+  const isLoading = useStore(s => s.isLoading);
+  const executionTime = useStore(s => s.executionTime);
+  const exportResults = useStore(s => s.exportResults);
+  const darkMode = useStore(s => s.darkMode);
+  const queryError = useStore(s => s.queryError);
+  const affectedRows = useStore(s => s.affectedRows);
 
-  const [selectedField, setSelectedField] = useState('');
+  const [filterText, setFilterText] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const handleFieldChange = (e) => {
-    setSelectedField(e.target.value);
-  };
+  // Reset page when results change
+  React.useEffect(() => { setCurrentPage(1); }, [queryResults]);
 
-  const filteredRows = queryResults 
-  ? queryResults.rows.filter((row) =>
-    queryResults.columns.some((column) =>
-      row[column] ?
-      row[column].toString().toLowerCase().includes(selectedField.toLowerCase()) : false
-    )
-  )
-  : [];
+  const filteredRows = queryResults
+    ? queryResults.rows.filter(row =>
+        queryResults.columns.some(col => {
+          const val = row[col];
+          return val != null && String(val).toLowerCase().includes(filterText.toLowerCase());
+        })
+      )
+    : [];
 
+  const totalPages = Math.ceil(filteredRows.length / PAGE_SIZE);
+  const pagedRows = filteredRows.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   return (
     <div className={`results-viewer ${darkMode ? 'dark' : 'light'}`}>
+      {/* Header */}
       <div className="results-header">
         <div className="section-title">
           <FaTable className="section-icon" />
           <h2>Query Results</h2>
+          {queryResults && (
+            <span className="row-count-badge">
+              {filteredRows.length.toLocaleString()} row{filteredRows.length !== 1 ? 's' : ''}
+            </span>
+          )}
         </div>
         <div className="results-controls">
-          {executionTime && (
+          {executionTime != null && (
             <span className="execution-time">
               <FaClock className="time-icon" />
-              Execution time: {executionTime.toFixed(2)}s
+              {executionTime.toFixed(3)}s
             </span>
+          )}
+          {queryResults && queryResults.columns.length > 0 && (
+            <div className="search-control">
+              <input
+                type="text"
+                placeholder="Filter results…"
+                value={filterText}
+                onChange={e => { setFilterText(e.target.value); setCurrentPage(1); }}
+              />
+            </div>
           )}
           <button
             onClick={exportResults}
             className="export-btn"
-            disabled={!queryResults}
+            disabled={!queryResults || queryResults.columns.length === 0}
+            title="Export as CSV"
           >
             <FaDownload /> Export CSV
           </button>
-
-          <div className="search-control">
-          <input
-            type='text'
-            placeholder='search all fileds'
-            value={selectedField}
-            onChange={handleFieldChange}
-          />
-          </div>
         </div>
       </div>
 
+      {/* Body */}
       <div className="results-container">
         {isLoading ? (
           <div className="loading-dots">
-            <span className="dot"></span>
-            <span className="dot"></span>
-            <span className="dot"></span>
+            <span className="dot" /><span className="dot" /><span className="dot" />
           </div>
-        ) : queryResults ? (
-          <div className="table-container">
-            <table className="results-table">
-              <thead>
-                <tr>
-                  {queryResults.columns.map((column, index) => (
-                    <th key={index}>
-                      {column}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filteredRows.length>0 ?(
-                  filteredRows.map((row, rowIndex) => (
-                    <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'even-row' : 'odd-row'}>
-                      {queryResults.columns.map((column, colIndex)=> (
-                        <td key={colIndex}>
-                          {typeof row[column] === 'number'
-                            ? row[column].toLocaleString()
-                            : row[column]
-                          }
-                        </td>
-                      ))}
-                    </tr>
-                  ))
-                ) : (
+
+        ) : queryError ? (
+          /* ── Error Panel ── */
+          <div className="error-panel">
+            <div className="error-panel-header">
+              <FaExclamationTriangle className="error-icon" />
+              <span>SQL Error</span>
+            </div>
+            <pre className="error-message">{queryError}</pre>
+          </div>
+
+        ) : affectedRows != null && (!queryResults || queryResults.columns.length === 0) ? (
+          /* ── DML success ── */
+          <div className="dml-success-panel">
+            <FaCheckCircle className="dml-icon" />
+            <div className="dml-text">
+              <strong>Query executed successfully</strong>
+              <span>{affectedRows} row{affectedRows !== 1 ? 's' : ''} affected</span>
+              {executionTime != null && <span className="dml-time">{executionTime.toFixed(3)}s</span>}
+            </div>
+          </div>
+
+        ) : queryResults && queryResults.columns.length > 0 ? (
+          /* ── Results table ── */
+          <>
+            <div className="table-container">
+              <table className="results-table">
+                <thead>
                   <tr>
-                    <td colSpan={queryResults.columns.length} className='no-results'>
-                      No results found
-                    </td>
+                    {queryResults.columns.map((col, i) => (
+                      <th key={i}>{col}</th>
+                    ))}
                   </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {pagedRows.length > 0 ? (
+                    pagedRows.map((row, ri) => (
+                      <tr key={ri} className={ri % 2 === 0 ? 'even-row' : 'odd-row'}>
+                        {queryResults.columns.map((col, ci) => (
+                          <td key={ci}>
+                            {row[col] === null || row[col] === undefined
+                              ? <span className="null-value">NULL</span>
+                              : typeof row[col] === 'number'
+                                ? row[col].toLocaleString()
+                                : String(row[col])
+                            }
+                          </td>
+                        ))}
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={queryResults.columns.length} className="no-results">
+                        No results match your filter
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="pagination">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="page-btn"
+                >
+                  <FaChevronLeft />
+                </button>
+                <span className="page-info">
+                  Page {currentPage} of {totalPages}
+                  <span className="page-range">
+                    ({((currentPage - 1) * PAGE_SIZE) + 1}–{Math.min(currentPage * PAGE_SIZE, filteredRows.length)} of {filteredRows.length})
+                  </span>
+                </span>
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="page-btn"
+                >
+                  <FaChevronRight />
+                </button>
+              </div>
+            )}
+          </>
+
         ) : (
           <TableSkeleton />
         )}

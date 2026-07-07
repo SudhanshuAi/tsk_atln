@@ -1,71 +1,128 @@
-/* Header.css - Styles for the header component */
+/* Header.css */
 
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 16px;
-    height: 60px;
-  }
-  
-  .header.light {
-    background-color: #2563eb;
-    color: white;
-    border-bottom: 1px solid #1d4ed8;
-  }
-  
-  .header.dark {
-    background-color: #1e293b;
-    color: white;
-    border-bottom: 1px solid #0f172a;
-  }
-  
-  .app-title {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1.5rem;
-    font-weight: bold;
-  }
-  
-  .header-icon {
-    font-size: 1.3rem;
-  }
-  
-  .header-controls {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  
-  .theme-toggle-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    transition: background-color 0.2s;
-  }
-  
-  .header.light .theme-toggle-btn {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: white;
-  }
-  
-  .header.light .theme-toggle-btn:hover {
-    background-color: rgba(255, 255, 255, 0.3);
-  }
-  
-  .header.dark .theme-toggle-btn {
-    background-color: rgba(0, 0, 0, 0.3);
-    color: #f8fafc;
-  }
-  
-  .header.dark .theme-toggle-btn:hover {
-    background-color: rgba(0, 0, 0, 0.4);
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  height: 60px;
+  flex-shrink: 0;
+  gap: 16px;
+}
+
+.header.light {
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  color: white;
+  border-bottom: 1px solid #1e40af;
+  box-shadow: 0 2px 12px rgba(37, 99, 235, 0.3);
+}
+
+.header.dark {
+  background: linear-gradient(135deg, #0d1117, #161b22);
+  color: white;
+  border-bottom: 1px solid #21262d;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.4);
+}
+
+/* ── App Title ───────────────────────────────────────────────────────────── */
+.app-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+.app-title h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.header-icon { font-size: 1.2rem; }
+
+/* ── Mode Switch ─────────────────────────────────────────────────────────── */
+.mode-switch {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.mode-divider {
+  width: 1px;
+  height: 22px;
+  background: rgba(255,255,255,0.2);
+}
+
+.mode-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: rgba(255,255,255,0.75);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 500;
+  transition: all 0.18s;
+  white-space: nowrap;
+}
+
+.mode-btn:hover {
+  background: rgba(255,255,255,0.15);
+  color: white;
+}
+
+.mode-btn.active {
+  background: rgba(255,255,255,0.22);
+  color: white;
+  font-weight: 600;
+}
+
+.mode-icon { font-size: 0.85rem; }
+
+.mode-active-dot {
+  font-size: 0.7rem;
+  color: #98c379;
+}
+
+.mode-conn-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Header Controls ─────────────────────────────────────────────────────── */
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.theme-toggle-btn {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+.theme-toggle-btn:hover {
+  background: rgba(255,255,255,0.25);
+  transform: translateY(-1px);
+}
