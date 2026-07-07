@@ -33,32 +33,36 @@ function App() {
   // Drag-to-resize logic
   useEffect(() => {
     const resizer = resizerRef.current;
-    if (!resizer) return;
+    const content = contentRef.current;
+    if (!resizer || !content) return;
 
-    let startY, startHeight;
+    let isResizing = false;
 
     const onMouseDown = (e) => {
-      startY = e.clientY;
-      startHeight = queryEditorRef.current.offsetHeight;
-      document.addEventListener('mousemove', onMouseMove);
-      document.addEventListener('mouseup', onMouseUp);
+      isResizing = true;
       document.body.style.cursor = 'ns-resize';
       document.body.style.userSelect = 'none';
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
     };
 
     const onMouseMove = (e) => {
-      if (!contentRef.current) return;
-      const contentHeight = contentRef.current.offsetHeight;
-      const deltaY = e.clientY - startY;
-      const newPercent = ((startHeight + deltaY) / contentHeight) * 100;
+      if (!isResizing || !content) return;
+      
+      const contentRect = content.getBoundingClientRect();
+      const relativeY = e.clientY - contentRect.top;
+      const newPercent = (relativeY / contentRect.height) * 100;
+      
+      // Clamp between 20% and 80%
       setQueryEditorHeight(Math.max(20, Math.min(80, newPercent)));
     };
 
     const onMouseUp = () => {
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
+      isResizing = false;
       document.body.style.cursor = '';
       document.body.style.userSelect = '';
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
     };
 
     resizer.addEventListener('mousedown', onMouseDown);
@@ -124,7 +128,7 @@ function App() {
 
           <div
             className="results-viewer-wrapper"
-            style={{ height: `calc(100% - ${queryEditorHeight}% - 8px)` }}
+            style={{ height: `calc(100% - ${queryEditorHeight}% - 6px)` }}
           >
             <ResultsViewer />
           </div>

@@ -77,12 +77,9 @@ const ResultsViewer = () => {
       {/* Body */}
       <div className="results-container">
         {isLoading ? (
-          <div className="loading-dots">
-            <span className="dot" /><span className="dot" /><span className="dot" />
-          </div>
+          <TableSkeleton />
 
         ) : queryError ? (
-          /* ── Error Panel ── */
           <div className="error-panel">
             <div className="error-panel-header">
               <FaExclamationTriangle className="error-icon" />
@@ -92,7 +89,6 @@ const ResultsViewer = () => {
           </div>
 
         ) : affectedRows != null && (!queryResults || queryResults.columns.length === 0) ? (
-          /* ── DML success ── */
           <div className="dml-success-panel">
             <FaCheckCircle className="dml-icon" />
             <div className="dml-text">
@@ -103,7 +99,6 @@ const ResultsViewer = () => {
           </div>
 
         ) : queryResults && queryResults.columns.length > 0 ? (
-          /* ── Results table ── */
           <>
             <div className="table-container">
               <table className="results-table">
@@ -141,7 +136,6 @@ const ResultsViewer = () => {
               </table>
             </div>
 
-            {/* Pagination */}
             {totalPages > 1 && (
               <div className="pagination">
                 <button
@@ -169,7 +163,19 @@ const ResultsViewer = () => {
           </>
 
         ) : (
-          <TableSkeleton />
+          <div className="welcome-state">
+            <div className="welcome-content">
+              <div className="welcome-icon-box">
+                <FaTable className="welcome-icon" />
+              </div>
+              <h3>No Results Yet</h3>
+              <p>Execute your SQL query above or select a predefined query from the sidebar to see results here.</p>
+              <div className="welcome-hints">
+                <div className="hint-item"><span className="hint-key">Ctrl + Enter</span> to run query</div>
+                <div className="hint-item"><span className="hint-key">Double-click</span> table to SELECT</div>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>

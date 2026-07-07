@@ -26,20 +26,24 @@ const QueryEditor = () => {
   }, {});
 
   // Ctrl+Enter / Cmd+Enter to run
-  const runKeymap = keymap.of([
+  const runKeymap = React.useMemo(() => keymap.of([
     {
-      key: 'Ctrl-Enter',
-      mac: 'Cmd-Enter',
+      key: 'Mod-Enter',
       run: () => {
         executeQuery();
         return true;
       },
     },
-  ]);
+  ]), [executeQuery]);
 
   const handleChange = useCallback((value) => {
     setCurrentQuery(value);
   }, [setCurrentQuery]);
+
+  const extensions = React.useMemo(() => [
+    sql({ dialect: MySQL, schema: cmSchema, upperCaseKeywords: true }),
+    runKeymap,
+  ], [cmSchema, runKeymap]);
 
   return (
     <div className={`query-editor ${darkMode ? 'dark' : 'light'}`}>
@@ -77,10 +81,7 @@ const QueryEditor = () => {
           value={currentQuery}
           onChange={handleChange}
           theme={darkMode ? oneDark : 'light'}
-          extensions={[
-            sql({ dialect: MySQL, schema: cmSchema, upperCaseKeywords: true }),
-            runKeymap,
-          ]}
+          extensions={extensions}
           basicSetup={{
             lineNumbers: true,
             highlightActiveLineGutter: true,
