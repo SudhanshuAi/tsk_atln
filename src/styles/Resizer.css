@@ -9,6 +9,18 @@
   justify-content: center;
   align-items: center;
   transition: background-color 0.2s;
+  position: relative;
+  z-index: 20;
+}
+
+/* Larger hit area for easier grabbing */
+.horizontal-resizer::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  bottom: -6px;
+  left: 0;
+  right: 0;
 }
 
 .horizontal-resizer.light {

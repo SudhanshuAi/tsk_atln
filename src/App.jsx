@@ -27,49 +27,49 @@ function App() {
   }, [initDb]);
 
   useEffect(() => {
-    setQueryEditorHeight(50);
-  }, [setQueryEditorHeight]);
+    if (!queryEditorHeight) {
+      setQueryEditorHeight(50);
+    }
+  }, [queryEditorHeight, setQueryEditorHeight]);
 
-  // Drag-to-resize logic
+  // Drag-to-resize logic with global overlay support
   useEffect(() => {
     const resizer = resizerRef.current;
     const content = contentRef.current;
     if (!resizer || !content) return;
 
-    let isResizing = false;
-
     const onMouseDown = (e) => {
-      isResizing = true;
-      document.body.style.cursor = 'ns-resize';
-      document.body.style.userSelect = 'none';
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // Add a class to body to indicate resizing (helps with styling and cursors)
+      document.body.classList.add('is-resizing');
+      
+      const onMouseMove = (moveEvent) => {
+        const contentRect = content.getBoundingClientRect();
+        // Use pageY and subtract content offset to handle scrolling if any
+        const relativeY = moveEvent.clientY - contentRect.top;
+        const newPercent = (relativeY / contentRect.height) * 100;
+        
+        // Clamp to sensible limits
+        if (newPercent > 10 && newPercent < 90) {
+          setQueryEditorHeight(newPercent);
+        }
+      };
+
+      const onMouseUp = () => {
+        document.body.classList.remove('is-resizing');
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+      };
+
       document.addEventListener('mousemove', onMouseMove);
       document.addEventListener('mouseup', onMouseUp);
-    };
-
-    const onMouseMove = (e) => {
-      if (!isResizing || !content) return;
-      
-      const contentRect = content.getBoundingClientRect();
-      const relativeY = e.clientY - contentRect.top;
-      const newPercent = (relativeY / contentRect.height) * 100;
-      
-      // Clamp between 20% and 80%
-      setQueryEditorHeight(Math.max(20, Math.min(80, newPercent)));
-    };
-
-    const onMouseUp = () => {
-      isResizing = false;
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
     };
 
     resizer.addEventListener('mousedown', onMouseDown);
     return () => {
       resizer.removeEventListener('mousedown', onMouseDown);
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
     };
   }, [setQueryEditorHeight]);
 

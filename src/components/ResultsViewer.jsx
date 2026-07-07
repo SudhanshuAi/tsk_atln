@@ -165,9 +165,6 @@ const ResultsViewer = () => {
         ) : (
           <div className="welcome-state">
             <div className="welcome-content">
-              <div className="welcome-icon-box">
-                <FaTable className="welcome-icon" />
-              </div>
               <h3>No Results Yet</h3>
               <p>Execute your SQL query above or select a predefined query from the sidebar to see results here.</p>
               <div className="welcome-hints">

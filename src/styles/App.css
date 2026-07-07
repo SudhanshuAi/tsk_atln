@@ -3,86 +3,86 @@
 /* App.css - Main styles for the application */
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
-  }
-  
-  .app {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    width: 100%;
-  }
-  
-  .light-mode {
-    background-color: #f5f5f5;
-    color: #333;
-  }
-  
-  .dark-mode {
-    background-color: #1e1e1e;
-    color: #e0e0e0;
-  }
-  
-  .main-container {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-  }
-  
-  .content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-  
-  /* Query Editor and Results Viewer Wrappers */
-  .query-editor-wrapper, 
-  .results-viewer-wrapper {
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  /* Scrollbar styling */
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-  
-  .dark-mode ::-webkit-scrollbar-track {
-    background: #2d2d2d;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 4px;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background: #555;
-  }
-  
-  .dark-mode ::-webkit-scrollbar-thumb {
-    background: #555;
-  }
-  
-  .dark-mode ::-webkit-scrollbar-thumb:hover {
-    background: #777;
-  }
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+}
+
+.light-mode {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.dark-mode {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+}
+
+.main-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Query Editor and Results Viewer Wrappers */
+.query-editor-wrapper, 
+.results-viewer-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.dark-mode ::-webkit-scrollbar-track {
+  background: #2d2d2d;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.dark-mode ::-webkit-scrollbar-thumb {
+  background: #555;
+}
+
+.dark-mode ::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
 
 /* ── Loading / Error Splash ─────────────────────────────────────────────── */
 .app-loading {
@@ -166,3 +166,18 @@
   transition: background 0.2s;
 }
 .loading-splash.error button:hover { background: #528bcc; }
+
+/* ── Resizing State ─────────────────────────────────────────────────────── */
+body.is-resizing {
+  cursor: ns-resize !important;
+  user-select: none !important;
+}
+
+body.is-resizing * {
+  pointer-events: none !important;
+}
+
+body.is-resizing .horizontal-resizer {
+  pointer-events: auto !important;
+  background-color: #61afef !important;
+}

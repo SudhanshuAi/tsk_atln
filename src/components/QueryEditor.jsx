@@ -1,8 +1,9 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { sql, MySQL } from '@codemirror/lang-sql';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { keymap } from '@codemirror/view';
+import { Prec } from '@codemirror/state';
 import { FaPlay, FaBookmark as FaBookmarkSolid, FaRegBookmark, FaSpinner, FaCode } from 'react-icons/fa';
 import useStore from '../store/store';
 import '../styles/QueryEditor.css';
@@ -20,30 +21,28 @@ const QueryEditor = () => {
   const isBookmarked = bookmarkedQueries.includes(currentQuery);
 
   // Build CodeMirror SQL schema from our store schema
-  const cmSchema = schema.reduce((acc, table) => {
+  const cmSchema = useMemo(() => schema.reduce((acc, table) => {
     acc[table.tableName] = table.columns.map(c => c.name);
     return acc;
-  }, {});
-
-  // Ctrl+Enter / Cmd+Enter to run
-  const runKeymap = React.useMemo(() => keymap.of([
-    {
-      key: 'Mod-Enter',
-      run: () => {
-        executeQuery();
-        return true;
-      },
-    },
-  ]), [executeQuery]);
+  }, {}), [schema]);
 
   const handleChange = useCallback((value) => {
     setCurrentQuery(value);
   }, [setCurrentQuery]);
 
-  const extensions = React.useMemo(() => [
+  // Using high-priority keymap for Mod-Enter
+  const extensions = useMemo(() => [
     sql({ dialect: MySQL, schema: cmSchema, upperCaseKeywords: true }),
-    runKeymap,
-  ], [cmSchema, runKeymap]);
+    Prec.highest(keymap.of([
+      {
+        key: 'Mod-Enter',
+        run: () => {
+          executeQuery();
+          return true;
+        }
+      }
+    ]))
+  ], [cmSchema, executeQuery]);
 
   return (
     <div className={`query-editor ${darkMode ? 'dark' : 'light'}`}>
