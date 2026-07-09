@@ -1,4 +1,6 @@
-const BASE = '/api';
+// Production backend URL should be set via VITE_API_BASE_URL env variable on Vercel.
+// For local environment, it defaults to '/api' which is proxied by Vite.
+const BASE = import.meta.env.VITE_API_BASE_URL || '/api';
 
 async function post(path, body) {
   const res = await fetch(`${BASE}${path}`, {

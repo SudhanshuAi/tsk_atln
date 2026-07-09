@@ -5,9 +5,10 @@ import queryRouter from './routes/query.js';
 import schemaRouter from './routes/schema.js';
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
-app.use(cors({ origin: ['http://localhost:5173', 'http://127.0.0.1:5173'] }));
+// Allow CORS from any origin (supports Vercel preview deploys out of the box)
+app.use(cors());
 app.use(express.json());
 
 // Routes
