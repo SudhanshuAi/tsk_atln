@@ -92,38 +92,43 @@ const ConnectionManager = () => {
         </div>
 
         <div className="cm-body">
-          {/* Existing Connections */}
+          {/* Saved Connections */}
           {connections.length > 0 && (
             <div className="cm-section">
-              <h3 className="cm-section-title">Active Connections</h3>
+              <h3 className="cm-section-title">Saved Connections</h3>
               <div className="cm-connection-list">
-                {connections.map(conn => (
-                  <div
-                    key={conn.connectionId}
-                    className={`cm-connection-item ${activeConnectionId === conn.connectionId ? 'active' : ''}`}
-                  >
+                {connections.map(conn => {
+                  const isActive = activeConnectionId === conn.id;
+                  return (
                     <div
-                      className="cm-connection-info"
-                      onClick={() => setActiveConnection(conn.connectionId)}
+                      key={conn.id}
+                      className={`cm-connection-item ${isActive ? 'active' : ''}`}
                     >
-                      {dbIcon(conn.type)}
-                      <div className="cm-connection-text">
-                        <span className="cm-conn-name">{conn.name}</span>
-                        <span className="cm-conn-meta">{conn.type.toUpperCase()} · {conn.database}</span>
+                      <div
+                        className="cm-connection-info"
+                        onClick={() => setActiveConnection(conn.id)}
+                      >
+                        {dbIcon(conn.type)}
+                        <div className="cm-connection-text">
+                          <span className="cm-conn-name">{conn.name}</span>
+                          <span className="cm-conn-meta">
+                            {conn.type.toUpperCase()} · {conn.database}
+                          </span>
+                        </div>
+                        {isActive && (
+                          <FaCheck className="cm-active-check" />
+                        )}
                       </div>
-                      {activeConnectionId === conn.connectionId && (
-                        <FaCheck className="cm-active-check" />
-                      )}
+                      <button
+                        className="cm-disconnect-btn"
+                        onClick={() => disconnectDb(conn.id)}
+                        title="Forget Connection"
+                      >
+                        <FaTrash />
+                      </button>
                     </div>
-                    <button
-                      className="cm-disconnect-btn"
-                      onClick={() => disconnectDb(conn.connectionId)}
-                      title="Disconnect"
-                    >
-                      <FaTrash />
-                    </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}

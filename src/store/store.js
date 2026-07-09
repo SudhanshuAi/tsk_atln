@@ -7,7 +7,11 @@ import { apiClient } from '../services/apiClient';
 const useStore = create(
   persist(
     (set, get) => ({
-      // ── Editor ──────────────────────────────────────────────────────────
+      // ── Editor & Tabs ───────────────────────────────────────────────────
+      editors: [
+        { id: 'default', name: 'Query 1', query: PREDEFINED_QUERIES[0].query }
+      ],
+      activeEditorId: 'default',
       currentQuery: PREDEFINED_QUERIES[0].query,
       selectedQueryId: 1,
 
@@ -37,7 +41,7 @@ const useStore = create(
       schema: [],               // [{ tableName, columns: [{name,type}] }]
 
       // ── Connections ──────────────────────────────────────────────────────
-      connections: [],          // [{ connectionId, name, type, database }]
+      connections: [],          // [{ id, connectionId, name, type, host, port, user, password, database }]
       activeConnectionId: null,
       connectionError: null,
       isConnecting: false,
@@ -54,9 +58,76 @@ const useStore = create(
         }
       },
 
+      // ── Tabs Actions ─────────────────────────────────────────────────────
+      createEditor: (query = '') => {
+        const { editors } = get();
+        const newId = Date.now().toString();
+        const nextNumber = editors.length + 1;
+        const newEditor = { id: newId, name: `Query ${nextNumber}`, query };
+        set({
+          editors: [...editors, newEditor],
+          activeEditorId: newId,
+          currentQuery: query,
+          selectedQueryId: null,
+        });
+      },
+
+      deleteEditor: (id) => {
+        const { editors, activeEditorId } = get();
+        if (editors.length <= 1) {
+          set({
+            editors: [{ id: 'default', name: 'Query 1', query: '' }],
+            activeEditorId: 'default',
+            currentQuery: '',
+            selectedQueryId: null,
+          });
+          return;
+        }
+        const newEditors = editors.filter(e => e.id !== id);
+        let nextActiveId = activeEditorId;
+        if (activeEditorId === id) {
+          const idx = editors.findIndex(e => e.id === id);
+          nextActiveId = idx === 0 ? editors[1].id : editors[idx - 1].id;
+        }
+        const nextActiveEditor = newEditors.find(e => e.id === nextActiveId);
+        set({
+          editors: newEditors,
+          activeEditorId: nextActiveId,
+          currentQuery: nextActiveEditor ? nextActiveEditor.query : '',
+          selectedQueryId: null, // Reset predefined selection when deleting tabs
+        });
+      },
+
+      renameEditor: (id, name) => {
+        const { editors } = get();
+        set({
+          editors: editors.map(e => e.id === id ? { ...e, name } : e)
+        });
+      },
+
+      setActiveEditorId: (id) => {
+        const { editors } = get();
+        const editor = editors.find(e => e.id === id);
+        if (editor) {
+          set({
+            activeEditorId: id,
+            currentQuery: editor.query,
+            selectedQueryId: null,
+          });
+        }
+      },
+
+      updateActiveQuery: (query) => {
+        const { editors, activeEditorId } = get();
+        set({
+          editors: editors.map(e => e.id === activeEditorId ? { ...e, query } : e),
+          currentQuery: query,
+        });
+      },
+
       // ── Execute query ─────────────────────────────────────────────────────
       executeQuery: async () => {
-        const { mode, activeConnectionId, currentQuery, recentQueries } = get();
+        const { mode, activeConnectionId, currentQuery, recentQueries, connections } = get();
         set({ isLoading: true, queryError: null, affectedRows: null, queryResults: null });
 
         const startTime = performance.now();
@@ -70,7 +141,19 @@ const useStore = create(
             set({ queryError: 'No active connection. Please connect to a database.', isLoading: false });
             return;
           }
-          result = await apiClient.executeQuery(activeConnectionId, currentQuery);
+
+          // Auto-reconnect/verify pool in backend
+          const ok = await get().ensureActiveConnection();
+          if (!ok) {
+            set({
+              queryError: 'Could not connect to database. Please check your credentials and make sure the server is reachable.',
+              isLoading: false
+            });
+            return;
+          }
+
+          const activeConn = get().connections.find(c => c.id === activeConnectionId);
+          result = await apiClient.executeQuery(activeConn.connectionId, currentQuery);
         }
 
         if (result.error) {
@@ -93,14 +176,17 @@ const useStore = create(
 
       // ── Schema ────────────────────────────────────────────────────────────
       refreshSchema: async () => {
-        const { mode, activeConnectionId } = get();
+        const { mode, activeConnectionId, connections } = get();
         if (mode === 'sample') {
           set({ schema: getSampleSchema() });
         } else if (activeConnectionId) {
-          try {
-            const schema = await apiClient.fetchSchema(activeConnectionId);
-            if (!schema.error) set({ schema });
-          } catch (_) {}
+          const conn = connections.find(c => c.id === activeConnectionId);
+          if (conn && conn.connectionId) {
+            try {
+              const schema = await apiClient.fetchSchema(conn.connectionId);
+              if (!schema.error) set({ schema });
+            } catch (_) {}
+          }
         }
       },
 
@@ -115,21 +201,39 @@ const useStore = create(
             set({ connectionError: result.error, isConnecting: false });
             return false;
           }
-          const newConn = {
+          
+          const { connections } = get();
+          const key = `${config.type}-${config.host}-${config.database}-${config.user}`;
+          const existingIdx = connections.findIndex(c => `${c.type}-${c.host}-${c.database}-${c.user}` === key);
+
+          const connectionProfile = {
+            id: existingIdx >= 0 ? connections[existingIdx].id : Date.now().toString(),
             connectionId: result.connectionId,
-            name: result.name,
-            type: result.type,
-            database: result.database,
+            name: `${config.database}@${config.host}`,
+            type: config.type,
+            host: config.host,
+            port: config.port,
+            user: config.user,
+            password: config.password,
+            database: config.database,
           };
-          set(state => ({
-            connections: [...state.connections, newConn],
-            activeConnectionId: result.connectionId,
+
+          let newConnections = [...connections];
+          if (existingIdx >= 0) {
+            newConnections[existingIdx] = connectionProfile;
+          } else {
+            newConnections.push(connectionProfile);
+          }
+
+          set({
+            connections: newConnections,
+            activeConnectionId: connectionProfile.id,
             mode: 'connected',
             schema: result.schema || [],
             isConnecting: false,
             connectionError: null,
             showConnectionManager: false,
-          }));
+          });
           return true;
         } catch (err) {
           set({ connectionError: err.message, isConnecting: false });
@@ -137,24 +241,93 @@ const useStore = create(
         }
       },
 
-      disconnectDb: async (connectionId) => {
-        await apiClient.disconnectDb(connectionId);
-        const { connections, activeConnectionId, mode } = get();
-        const remaining = connections.filter(c => c.connectionId !== connectionId);
-        const newActive = remaining.length > 0 ? remaining[remaining.length - 1].connectionId : null;
+      ensureActiveConnection: async () => {
+        const { mode, activeConnectionId, connections } = get();
+        if (mode !== 'connected' || !activeConnectionId) return true;
+
+        const conn = connections.find(c => c.id === activeConnectionId);
+        if (!conn) return false;
+
+        if (!conn.connectionId) {
+          return await get().reconnectProfile(conn.id);
+        }
+
+        try {
+          const schema = await apiClient.fetchSchema(conn.connectionId);
+          if (schema.error) {
+            return await get().reconnectProfile(conn.id);
+          }
+          return true;
+        } catch (_) {
+          return await get().reconnectProfile(conn.id);
+        }
+      },
+
+      reconnectProfile: async (profileId) => {
+        const { connections } = get();
+        const conn = connections.find(c => c.id === profileId);
+        if (!conn) return false;
+
+        try {
+          const result = await apiClient.connectToDb({
+            type: conn.type,
+            host: conn.host,
+            port: conn.port,
+            user: conn.user,
+            password: conn.password,
+            database: conn.database,
+          });
+
+          if (result.error) return false;
+
+          const updatedConns = connections.map(c =>
+            c.id === profileId ? { ...c, connectionId: result.connectionId } : c
+          );
+          set({
+            connections: updatedConns,
+            schema: result.schema || [],
+          });
+          return true;
+        } catch (_) {
+          return false;
+        }
+      },
+
+      disconnectDb: async (profileId) => {
+        const { connections } = get();
+        const conn = connections.find(c => c.id === profileId);
+        if (conn && conn.connectionId) {
+          try {
+            await apiClient.disconnectDb(conn.connectionId);
+          } catch (_) {}
+        }
+        
+        const remaining = connections.filter(c => c.id !== profileId);
+        const newActive = remaining.length > 0 ? remaining[remaining.length - 1].id : null;
         set({
           connections: remaining,
           activeConnectionId: newActive,
           mode: newActive ? 'connected' : 'sample',
-          schema: newActive ? get().schema : getSampleSchema(),
+          schema: [],
         });
-        if (!newActive) get().refreshSchema();
+        if (newActive) {
+          get().refreshSchema();
+        } else {
+          get().switchToSample();
+        }
       },
 
-      setActiveConnection: async (connectionId) => {
-        set({ activeConnectionId: connectionId, mode: 'connected' });
-        const schema = await apiClient.fetchSchema(connectionId);
-        if (!schema.error) set({ schema });
+      setActiveConnection: async (profileId) => {
+        set({ activeConnectionId: profileId, mode: 'connected', isLoading: true });
+        const ok = await get().reconnectProfile(profileId);
+        if (ok) {
+          set({ isLoading: false, queryError: null });
+        } else {
+          set({
+            isLoading: false,
+            queryError: `Failed to restore connection. Please recheck your credentials.`,
+          });
+        }
       },
 
       switchToSample: () => {
@@ -162,14 +335,22 @@ const useStore = create(
       },
 
       // ── Query helpers ─────────────────────────────────────────────────────
-      setCurrentQuery: (query) => set({ currentQuery: query }),
+      setCurrentQuery: (query) => {
+        const { editors, activeEditorId } = get();
+        set({
+          currentQuery: query,
+          editors: editors.map(e => e.id === activeEditorId ? { ...e, query } : e),
+        });
+      },
 
       selectQuery: (queryId) => {
         const selectedQuery = PREDEFINED_QUERIES.find(q => q.id === queryId);
         if (!selectedQuery) return;
+        const { editors, activeEditorId } = get();
         set({
           selectedQueryId: queryId,
           currentQuery: selectedQuery.query,
+          editors: editors.map(e => e.id === activeEditorId ? { ...e, query: selectedQuery.query } : e),
           queryResults: null,
           queryError: null,
           executionTime: null,
@@ -179,8 +360,10 @@ const useStore = create(
 
       loadQuery: (query) => {
         const match = PREDEFINED_QUERIES.find(q => q.query === query);
+        const { editors, activeEditorId } = get();
         set({
           currentQuery: query,
+          editors: editors.map(e => e.id === activeEditorId ? { ...e, query } : e),
           selectedQueryId: match?.id || null,
           queryResults: null,
           queryError: null,
@@ -264,6 +447,11 @@ const useStore = create(
         bookmarkedQueries: state.bookmarkedQueries,
         recentQueries: state.recentQueries,
         queryEditorHeight: state.queryEditorHeight,
+        connections: state.connections,
+        activeConnectionId: state.activeConnectionId,
+        mode: state.mode,
+        editors: state.editors,
+        activeEditorId: state.activeEditorId,
       }),
     }
   )
